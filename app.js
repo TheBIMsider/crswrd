@@ -27,6 +27,9 @@ function focusMobileInput() {
   // Only do this on touch-ish setups so desktop stays normal.
   if (!isTouchLikely()) return;
 
+  if (Date.now() < MOBILE_FOCUS_LOCK_UNTIL) return;
+  if (isInteractiveControl(document.activeElement)) return;
+
   // Clear so each keystroke is easy to interpret.
   input.value = '';
 
@@ -3435,9 +3438,13 @@ function wireMobileKeyboard() {
   });
 
   input.addEventListener('blur', () => {
-    if (shouldAutoRefocusMobileInput()) {
-      setTimeout(() => focusMobileInput(), 0);
-    }
+    if (!CURRENT || !isTouchLikely()) return;
+    if (Date.now() < MOBILE_FOCUS_LOCK_UNTIL) return;
+
+    // If the user is interacting with real controls, do not steal focus back.
+    if (isInteractiveControl(document.activeElement)) return;
+
+    setTimeout(() => focusMobileInput(), 0);
   });
 }
 

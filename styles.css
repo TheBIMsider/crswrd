@@ -624,8 +624,19 @@ select:focus {
     bottom: 0;
     width: 1px;
     height: 1px;
+
     opacity: 0;
+    border: 0;
+    padding: 0;
+    margin: 0;
+
+    background: transparent;
+    color: transparent;
+    caret-color: transparent;
+
     pointer-events: none;
+    outline: none;
+    z-index: -1;
   }
 
   /* Mobile: gameplay toolbar should fit, not overflow */
