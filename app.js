@@ -38,6 +38,37 @@ function focusMobileInput() {
   }
 }
 
+let MOBILE_FOCUS_LOCK_UNTIL = 0;
+
+function suppressMobileRefocus(ms = 600) {
+  MOBILE_FOCUS_LOCK_UNTIL = Date.now() + ms;
+}
+
+function shouldAutoRefocusMobileInput() {
+  if (!CURRENT) return false;
+  if (!isTouchLikely()) return false;
+  if (Date.now() < MOBILE_FOCUS_LOCK_UNTIL) return false;
+
+  const ae = document.activeElement;
+  if (!ae) return true;
+
+  // If the user is focusing real controls, do not steal focus back.
+  const tag = (ae.tagName || '').toUpperCase();
+  if (
+    tag === 'SELECT' ||
+    tag === 'INPUT' ||
+    tag === 'TEXTAREA' ||
+    tag === 'BUTTON'
+  ) {
+    return false;
+  }
+
+  // Also: if focus is anywhere inside the settings form, leave it alone.
+  if (ae.closest && ae.closest('#configForm')) return false;
+
+  return true;
+}
+
 function $(id) {
   return document.getElementById(id);
 }
@@ -3394,9 +3425,7 @@ function wireMobileKeyboard() {
   });
 
   input.addEventListener('blur', () => {
-    // iOS likes to randomly blur inputs.
-    // If the user is mid-game, steal focus back.
-    if (CURRENT && isTouchLikely()) {
+    if (shouldAutoRefocusMobileInput()) {
       setTimeout(() => focusMobileInput(), 0);
     }
   });

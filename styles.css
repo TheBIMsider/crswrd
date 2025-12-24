@@ -620,8 +620,8 @@ select:focus {
    but all visible interaction remains on the grid. */
   .mobile-input {
     position: fixed;
-    left: -9999px;
-    top: 0;
+    left: 0;
+    bottom: 0;
     width: 1px;
     height: 1px;
     opacity: 0;
