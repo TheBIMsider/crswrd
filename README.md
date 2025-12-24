@@ -3,7 +3,7 @@
 <img
   src="https://github.com/user-attachments/assets/d8f1cb9a-5210-4731-adaf-2b499d34c1c3"
   alt="CRSWRD logo"
-  width="400"
+  width="600"
 />
 
 Build it. Solve it.
@@ -98,6 +98,7 @@ This project is licensed under the BSD-3-Clause License.
 Vibe-coded by The BIMsider with ChatGPT.
 
 Built as an experiment in lightweight, client-side game design.
+
 
 
 
