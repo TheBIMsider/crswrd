@@ -40,31 +40,36 @@ function focusMobileInput() {
 
 let MOBILE_FOCUS_LOCK_UNTIL = 0;
 
-function suppressMobileRefocus(ms = 600) {
+function suppressMobileRefocus(ms = 900) {
   MOBILE_FOCUS_LOCK_UNTIL = Date.now() + ms;
+}
+
+function isInteractiveControl(el) {
+  if (!el) return false;
+  const tag = (el.tagName || '').toUpperCase();
+  if (
+    tag === 'SELECT' ||
+    tag === 'INPUT' ||
+    tag === 'TEXTAREA' ||
+    tag === 'BUTTON' ||
+    tag === 'A'
+  ) {
+    return true;
+  }
+  return Boolean(el.closest && el.closest('#configForm'));
 }
 
 function shouldAutoRefocusMobileInput() {
   if (!CURRENT) return false;
   if (!isTouchLikely()) return false;
+
+  // If we recently interacted with controls, do NOT steal focus back yet.
   if (Date.now() < MOBILE_FOCUS_LOCK_UNTIL) return false;
 
   const ae = document.activeElement;
-  if (!ae) return true;
 
-  // If the user is focusing real controls, do not steal focus back.
-  const tag = (ae.tagName || '').toUpperCase();
-  if (
-    tag === 'SELECT' ||
-    tag === 'INPUT' ||
-    tag === 'TEXTAREA' ||
-    tag === 'BUTTON'
-  ) {
-    return false;
-  }
-
-  // Also: if focus is anywhere inside the settings form, leave it alone.
-  if (ae.closest && ae.closest('#configForm')) return false;
+  // If a real control is focused (or we’re inside config), leave it alone.
+  if (isInteractiveControl(ae)) return false;
 
   return true;
 }
@@ -110,6 +115,11 @@ function init() {
     console.error('CRSWRD: configForm not found. Check index.html IDs.');
     return;
   }
+
+  // Mobile: allow settings controls (dropdowns) to open without us stealing focus back.
+  form.addEventListener('pointerdown', () => suppressMobileRefocus(1200), true);
+
+  form.addEventListener('focusin', () => suppressMobileRefocus(1200), true);
 
   // Settings toggle should be wired once (not on every submit)
   const toggleBtn = $('toggleConfigBtn');
