@@ -5,6 +5,39 @@
 // Session 8: keep a reference to the currently loaded puzzle UI + state
 let CURRENT = null;
 
+let MOBILE_INPUT = null;
+
+function isTouchLikely() {
+  return (
+    window.matchMedia('(pointer: coarse)').matches ||
+    window.matchMedia('(max-width: 900px)').matches
+  );
+}
+
+function getMobileInput() {
+  if (MOBILE_INPUT) return MOBILE_INPUT;
+  MOBILE_INPUT = document.getElementById('mobileInput');
+  return MOBILE_INPUT;
+}
+
+function focusMobileInput() {
+  const input = getMobileInput();
+  if (!input) return;
+
+  // Only do this on touch-ish setups so desktop stays normal.
+  if (!isTouchLikely()) return;
+
+  // Clear so each keystroke is easy to interpret.
+  input.value = '';
+
+  // preventScroll is supported in modern browsers; fallback is harmless.
+  try {
+    input.focus({ preventScroll: true });
+  } catch {
+    input.focus();
+  }
+}
+
 function $(id) {
   return document.getElementById(id);
 }
@@ -101,6 +134,103 @@ function init() {
 
   initCrosswordFromSelections();
   wireCheckButtons();
+  wireMobileKeyboard();
+
+  function wireMobileKeyboard() {
+    const input = getMobileInput();
+    if (!input) return;
+
+    // beforeinput is the most reliable way to detect backspace on mobile keyboards
+    input.addEventListener('beforeinput', (e) => {
+      if (!CURRENT) return;
+
+      if (e.inputType === 'deleteContentBackward') {
+        e.preventDefault();
+
+        const { host, model, state } = CURRENT;
+        const r = state.active.r;
+        const c = state.active.c;
+
+        const currentKey = keyRC(r, c);
+        const hasValue = Boolean(state.filled.get(currentKey));
+
+        if (hasValue) {
+          setCellValue(host, model, state, r, c, '');
+        } else {
+          movePrev(host, model, state);
+          setCellValue(host, model, state, state.active.r, state.active.c, '');
+        }
+
+        syncUI(host, CURRENT.acrossList, CURRENT.downList, model, state);
+        focusMobileInput();
+      }
+    });
+
+    // input event catches actual typed characters on iOS/Android reliably
+    input.addEventListener('input', () => {
+      if (!CURRENT) return;
+
+      const { host, model, state } = CURRENT;
+
+      // Take the last typed character (mobile keyboards can send more than 1)
+      const raw = input.value || '';
+      const ch = raw.slice(-1).toUpperCase();
+
+      // Clear immediately so next keystroke is clean
+      input.value = '';
+
+      if (!/^[A-Z]$/.test(ch)) {
+        focusMobileInput();
+        return;
+      }
+
+      setCellValue(host, model, state, state.active.r, state.active.c, ch);
+      moveNext(host, model, state);
+      syncUI(host, CURRENT.acrossList, CURRENT.downList, model, state);
+
+      // Keep keyboard open
+      focusMobileInput();
+    });
+
+    // Optional: keep arrow keys working if the keyboard provides them
+    input.addEventListener('keydown', (e) => {
+      if (!CURRENT) return;
+
+      const { host, model, state } = CURRENT;
+
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        state.direction = 'across';
+        moveTo(host, model, state, state.active.r, state.active.c - 1, true);
+        syncUI(host, CURRENT.acrossList, CURRENT.downList, model, state);
+        return;
+      }
+
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        state.direction = 'across';
+        moveTo(host, model, state, state.active.r, state.active.c + 1, true);
+        syncUI(host, CURRENT.acrossList, CURRENT.downList, model, state);
+        return;
+      }
+
+      if (e.key === 'ArrowUp') {
+        e.preventDefault();
+        state.direction = 'down';
+        moveTo(host, model, state, state.active.r - 1, state.active.c, true);
+        syncUI(host, CURRENT.acrossList, CURRENT.downList, model, state);
+        return;
+      }
+
+      if (e.key === 'ArrowDown') {
+        e.preventDefault();
+        state.direction = 'down';
+        moveTo(host, model, state, state.active.r + 1, state.active.c, true);
+        syncUI(host, CURRENT.acrossList, CURRENT.downList, model, state);
+        return;
+      }
+    });
+  }
 
   console.info('CRSWRD: Phase 2 UI loaded (static crossword, no generation).');
 }
@@ -2732,6 +2862,7 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
     setActiveCell(model, state, pos.r, pos.c, state.direction);
     syncUI(host, acrossList, downList, model, state);
     focusCellButton(host, pos.r, pos.c);
+    focusMobileInput();
   });
 
   host.addEventListener('pointermove', (e) => {
