@@ -136,102 +136,6 @@ function init() {
   wireCheckButtons();
   wireMobileKeyboard();
 
-  function wireMobileKeyboard() {
-    const input = getMobileInput();
-    if (!input) return;
-
-    // beforeinput is the most reliable way to detect backspace on mobile keyboards
-    input.addEventListener('beforeinput', (e) => {
-      if (!CURRENT) return;
-
-      if (e.inputType === 'deleteContentBackward') {
-        e.preventDefault();
-
-        const { host, model, state } = CURRENT;
-        const r = state.active.r;
-        const c = state.active.c;
-
-        const currentKey = keyRC(r, c);
-        const hasValue = Boolean(state.filled.get(currentKey));
-
-        if (hasValue) {
-          setCellValue(host, model, state, r, c, '');
-        } else {
-          movePrev(host, model, state);
-          setCellValue(host, model, state, state.active.r, state.active.c, '');
-        }
-
-        syncUI(host, CURRENT.acrossList, CURRENT.downList, model, state);
-        focusMobileInput();
-      }
-    });
-
-    // input event catches actual typed characters on iOS/Android reliably
-    input.addEventListener('input', () => {
-      if (!CURRENT) return;
-
-      const { host, model, state } = CURRENT;
-
-      // Take the last typed character (mobile keyboards can send more than 1)
-      const raw = input.value || '';
-      const ch = raw.slice(-1).toUpperCase();
-
-      // Clear immediately so next keystroke is clean
-      input.value = '';
-
-      if (!/^[A-Z]$/.test(ch)) {
-        focusMobileInput();
-        return;
-      }
-
-      setCellValue(host, model, state, state.active.r, state.active.c, ch);
-      moveNext(host, model, state);
-      syncUI(host, CURRENT.acrossList, CURRENT.downList, model, state);
-
-      // Keep keyboard open
-      focusMobileInput();
-    });
-
-    // Optional: keep arrow keys working if the keyboard provides them
-    input.addEventListener('keydown', (e) => {
-      if (!CURRENT) return;
-
-      const { host, model, state } = CURRENT;
-
-      if (e.key === 'ArrowLeft') {
-        e.preventDefault();
-        state.direction = 'across';
-        moveTo(host, model, state, state.active.r, state.active.c - 1, true);
-        syncUI(host, CURRENT.acrossList, CURRENT.downList, model, state);
-        return;
-      }
-
-      if (e.key === 'ArrowRight') {
-        e.preventDefault();
-        state.direction = 'across';
-        moveTo(host, model, state, state.active.r, state.active.c + 1, true);
-        syncUI(host, CURRENT.acrossList, CURRENT.downList, model, state);
-        return;
-      }
-
-      if (e.key === 'ArrowUp') {
-        e.preventDefault();
-        state.direction = 'down';
-        moveTo(host, model, state, state.active.r - 1, state.active.c, true);
-        syncUI(host, CURRENT.acrossList, CURRENT.downList, model, state);
-        return;
-      }
-
-      if (e.key === 'ArrowDown') {
-        e.preventDefault();
-        state.direction = 'down';
-        moveTo(host, model, state, state.active.r + 1, state.active.c, true);
-        syncUI(host, CURRENT.acrossList, CURRENT.downList, model, state);
-        return;
-      }
-    });
-  }
-
   console.info('CRSWRD: Phase 2 UI loaded (static crossword, no generation).');
 }
 
@@ -2902,6 +2806,7 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
     setActiveCell(model, state, r, c, state.direction);
     syncUI(host, acrossList, downList, model, state);
     focusCellButton(host, r, c);
+    focusMobileInput();
   });
 
   // Keyboard input and navigation on the grid
@@ -3013,6 +2918,7 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
 
     syncUI(host, acrossList, downList, model, state);
     focusCellButton(host, entry.start.r, entry.start.c);
+    focusMobileInput();
   }
 
   acrossList.addEventListener('click', (e) => handleClueActivate(e.target));
@@ -3206,6 +3112,13 @@ function moveTo(host, model, state, r, c, skipBlocks = false) {
 }
 
 function focusCellButton(host, r, c) {
+  // On touch devices, keep focus on the hidden input
+  // so the on-screen keyboard stays visible.
+  if (isTouchLikely()) {
+    focusMobileInput();
+    return;
+  }
+
   const btn = host.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
   if (btn) btn.focus();
 }
@@ -3383,6 +3296,110 @@ function wireCheckButtons() {
 
   if (resetPuzzleBtn) resetPuzzleBtn.addEventListener('click', resetPuzzle);
   if (newPuzzleBtn) newPuzzleBtn.addEventListener('click', generateNewPuzzle);
+}
+
+function wireMobileKeyboard() {
+  const input = getMobileInput();
+  if (!input) return;
+
+  // beforeinput is the most reliable way to detect backspace on mobile keyboards
+  input.addEventListener('beforeinput', (e) => {
+    if (!CURRENT) return;
+
+    if (e.inputType === 'deleteContentBackward') {
+      e.preventDefault();
+
+      const { host, model, state } = CURRENT;
+      const r = state.active.r;
+      const c = state.active.c;
+
+      const currentKey = keyRC(r, c);
+      const hasValue = Boolean(state.filled.get(currentKey));
+
+      if (hasValue) {
+        setCellValue(host, model, state, r, c, '');
+      } else {
+        movePrev(host, model, state);
+        setCellValue(host, model, state, state.active.r, state.active.c, '');
+      }
+
+      syncUI(host, CURRENT.acrossList, CURRENT.downList, model, state);
+
+      focusMobileInput();
+    }
+  });
+
+  // input event catches actual typed characters on iOS/Android reliably
+  input.addEventListener('input', () => {
+    if (!CURRENT) return;
+
+    const { host, model, state } = CURRENT;
+
+    // Take the last typed character (mobile keyboards can send more than 1)
+    const raw = input.value || '';
+    const ch = raw.slice(-1).toUpperCase();
+
+    // Clear immediately so next keystroke is clean
+    input.value = '';
+
+    if (!/^[A-Z]$/.test(ch)) {
+      focusMobileInput();
+      return;
+    }
+
+    setCellValue(host, model, state, state.active.r, state.active.c, ch);
+    moveNext(host, model, state);
+    syncUI(host, CURRENT.acrossList, CURRENT.downList, model, state);
+    // Keep keyboard open
+    focusMobileInput();
+  });
+
+  // Optional: keep arrow keys working if the keyboard provides them
+  input.addEventListener('keydown', (e) => {
+    if (!CURRENT) return;
+
+    const { host, model, state } = CURRENT;
+
+    if (e.key === 'ArrowLeft') {
+      e.preventDefault();
+      state.direction = 'across';
+      moveTo(host, model, state, state.active.r, state.active.c - 1, true);
+      syncUI(host, CURRENT.acrossList, CURRENT.downList, model, state);
+      return;
+    }
+
+    if (e.key === 'ArrowRight') {
+      e.preventDefault();
+      state.direction = 'across';
+      moveTo(host, model, state, state.active.r, state.active.c + 1, true);
+      syncUI(host, CURRENT.acrossList, CURRENT.downList, model, state);
+      return;
+    }
+
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      state.direction = 'down';
+      moveTo(host, model, state, state.active.r - 1, state.active.c, true);
+      syncUI(host, CURRENT.acrossList, CURRENT.downList, model, state);
+      return;
+    }
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      state.direction = 'down';
+      moveTo(host, model, state, state.active.r + 1, state.active.c, true);
+      syncUI(host, CURRENT.acrossList, CURRENT.downList, model, state);
+      return;
+    }
+  });
+
+  input.addEventListener('blur', () => {
+    // iOS likes to randomly blur inputs.
+    // If the user is mid-game, steal focus back.
+    if (CURRENT && isTouchLikely()) {
+      setTimeout(() => focusMobileInput(), 0);
+    }
+  });
 }
 
 // ─────────────────────────────────────────────
