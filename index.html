@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CRSWRD</title>
+    <meta
+      name="description"
+      content="Build a crossword in seconds. Solve it right away."
+    />
+
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to main content</a>
+
+    <header class="site-header">
+      <div class="container">
+        <div class="brand">
+          <div class="brand-text">
+            <h1 class="brand-title">CRSWRD</h1>
+            <p class="brand-subtitle">Build it. Solve it.</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main id="main" class="layout">
+      <!-- Left: Config panel (Phase 1 focus) -->
+      <section class="panel" aria-labelledby="config-title">
+        <h2 id="config-title" class="panel-title">Puzzle Settings</h2>
+
+        <p id="status" class="sr-only" role="status" aria-live="polite"></p>
+
+        <form
+          id="configForm"
+          class="config-form"
+          aria-describedby="config-help"
+        >
+          <fieldset class="fieldset">
+            <legend class="sr-only">Puzzle settings</legend>
+
+            <div class="field">
+              <label for="difficulty">Difficulty</label>
+              <select id="difficulty" name="difficulty" required>
+                <option value="easy">Easy</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="pack">Pack</label>
+              <select id="pack" name="pack" required>
+                <option value="general" selected>General</option>
+                <option value="movies">Movies</option>
+                <option value="sports">Sports</option>
+                <option value="holidays">Holidays</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="tone">Tone</label>
+              <select id="tone" name="tone" required>
+                <option value="serious" selected>Serious</option>
+                <option value="funny">Funny</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="timeLength">Grid size</label>
+              <select id="timeLength" name="timeLength" required>
+                <option value="small">Small</option>
+                <option value="medium" selected>Medium</option>
+                <option value="large">Large</option>
+              </select>
+            </div>
+
+            <button id="generateBtn" type="submit" class="btn-primary">
+              Generate Puzzle
+            </button>
+
+            <div class="config-tips" aria-label="Tips">
+              <div class="config-tips-title">How to play</div>
+              <p id="config-help" class="helper">
+                Pick your settings, then click Generate Puzzle. Changes apply to
+                the next puzzle only.
+              </p>
+              <p class="helper helper-sub">
+                Click a cell and type. Backspace clears.
+              </p>
+              <p class="helper helper-sub">
+                Arrow keys move. Click the same cell to switch Across/Down.
+              </p>
+              <p class="helper helper-sub">
+                Press Tab to jump to the active clue.
+              </p>
+            </div>
+          </fieldset>
+        </form>
+      </section>
+
+      <!-- Right: App stage (placeholder for later phases) -->
+      <section class="stage" aria-label="Puzzle stage">
+        <!-- Mobile-only toggle -->
+        <button
+          id="toggleConfigBtn"
+          class="btn-secondary mobile-only"
+          type="button"
+          aria-expanded="true"
+        >
+          Puzzle settings
+        </button>
+
+        <div class="stage-card">
+          <div class="stage-top">
+            <div class="gameplay-controls" aria-label="Gameplay controls">
+              <div class="control-group">
+                <button id="checkLetterBtn" class="btn-mini">
+                  Check Letter
+                </button>
+                <button id="checkWordBtn" class="btn-mini">Check Word</button>
+                <button id="checkPuzzleBtn" class="btn-mini">
+                  Check Puzzle
+                </button>
+              </div>
+
+              <div class="control-group">
+                <button id="revealLetterBtn" class="btn-mini">
+                  Reveal Letter
+                </button>
+                <button id="revealWordBtn" class="btn-mini">Reveal Word</button>
+                <button id="revealPuzzleBtn" class="btn-mini">
+                  Reveal Puzzle
+                </button>
+              </div>
+
+              <div class="control-group control-group-end">
+                <button id="resetPuzzleBtn" class="btn-mini">Reset</button>
+                <button id="newPuzzleBtn" class="btn-mini">New Puzzle</button>
+              </div>
+
+              <span
+                id="checkStatus"
+                class="check-status"
+                role="status"
+                aria-live="polite"
+              ></span>
+            </div>
+          </div>
+
+          <div class="puzzle-layout" aria-label="Crossword puzzle">
+            <!-- Grid -->
+            <div class="puzzle-grid-wrap">
+              <div class="puzzle-bar" aria-label="Active selection">
+                <span id="activeDir" class="pill" aria-live="polite"
+                  >Across</span
+                >
+                <span
+                  id="activeClue"
+                  class="puzzle-bar-text"
+                  aria-live="polite"
+                >
+                  Click any white cell to start.
+                </span>
+              </div>
+
+              <div
+                id="crossword"
+                class="crossword"
+                role="grid"
+                aria-label="Crossword grid"
+              ></div>
+            </div>
+
+            <!-- Clues -->
+            <aside class="clues" aria-label="Clues">
+              <div class="clues-section" aria-label="Across clues">
+                <h3 class="clues-title">Across</h3>
+                <ol id="acrossClues" class="clue-list"></ol>
+              </div>
+
+              <div class="clues-section" aria-label="Down clues">
+                <h3 class="clues-title">Down</h3>
+                <ol id="downClues" class="clue-list"></ol>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container">
+        🤖 Vibe-coded by The BIMsider & ChatGPT. Build it. Solve it.
+      </div>
+    </footer>
+
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,672 @@
+/* CRSWRD - Phase 1 styles
+   Dark-first, simple, and readable. */
+
+:root {
+  /* Colors */
+  --bg: #0c0f14;
+  --panel: #121826;
+  --panel-2: #0f1522;
+  --text: #e8edf6;
+  --muted: #aab4c5;
+  --border: rgba(255, 255, 255, 0.12);
+  --accent: #b7f000; /* lime accent (adjust later if needed) */
+  --accent-ink: #0b1200;
+  --control-bg: rgba(255, 255, 255, 0.06);
+  --control-bg-open: #121826; /* solid dark for dropdown list */
+  --control-border: rgba(255, 255, 255, 0.12);
+
+  /* Layout */
+  --radius: 14px;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 18px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial,
+    'Apple Color Emoji', 'Segoe UI Emoji';
+  background: radial-gradient(
+      1200px 600px at 20% -10%,
+      rgba(183, 240, 0, 0.08),
+      transparent 55%
+    ),
+    var(--bg);
+  color: var(--text);
+}
+
+.site-header {
+  padding: 18px 0 0;
+}
+
+.site-header .brand {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.brand-text {
+  text-align: left;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.brand-title {
+  font-size: 18px;
+  margin: 0;
+  line-height: 1.1;
+  letter-spacing: 0.6px;
+}
+
+.brand-subtitle {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.layout {
+  max-width: 1100px;
+  margin: 18px auto 0;
+  padding: 0 18px 24px;
+  display: grid;
+  grid-template-columns: 360px 1fr;
+  gap: 16px;
+}
+
+.panel,
+.stage-card {
+  background: rgba(18, 24, 38, 0.86);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.panel {
+  padding: 16px;
+}
+
+.panel-title {
+  margin: 0 0 12px;
+  font-size: 16px;
+}
+
+.config-form {
+  display: grid;
+  gap: 12px;
+}
+
+.field label {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+
+select {
+  width: 100%;
+  padding: 10px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--control-border);
+  background: var(--control-bg);
+  color: var(--text);
+  outline: none;
+
+  /* Helps browsers render native form controls in dark mode */
+  color-scheme: dark;
+}
+
+/* Dropdown list (options) styling.
+   Note: browsers vary, but this improves most Chromium-based setups. */
+select option,
+select optgroup {
+  background: var(--control-bg-open);
+  color: var(--text);
+}
+
+/* Make disabled options clearly disabled (if you ever use them) */
+select option:disabled {
+  color: rgba(232, 237, 246, 0.45);
+}
+
+select:focus {
+  border-color: rgba(183, 240, 0, 0.7);
+  box-shadow: 0 0 0 3px rgba(183, 240, 0, 0.12);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 11px 12px;
+  border-radius: 12px;
+  border: 0;
+  cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+  background: var(--accent);
+  color: var(--accent-ink);
+
+  margin-top: 12px; /* 👈 space above Generate button */
+}
+
+.btn-primary:active {
+  transform: translateY(1px);
+}
+
+/* Screen-reader only utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Skip link becomes visible on focus */
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--panel);
+  color: var(--text);
+  text-decoration: none;
+  transform: translateY(-140%);
+  transition: transform 120ms ease;
+  z-index: 999;
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+/* Clear keyboard focus */
+:focus-visible {
+  outline: 3px solid rgba(183, 240, 0, 0.85);
+  outline-offset: 2px;
+}
+
+/* Fieldset reset */
+.fieldset {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.helper {
+  margin-top: 10px; /* space below Generate Puzzle */
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.helper-sub {
+  margin-top: 6px;
+}
+
+.stage {
+  min-height: 340px;
+}
+
+.stage-card {
+  height: 100%;
+  padding: 18px;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+}
+
+.stage-title {
+  margin: 0;
+  font-size: 16px;
+}
+
+.stage-text {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+.config-tips {
+  margin-top: 12px; /* space below Generate button */
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+.config-tips-title {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+/* Phase 2: Static Crossword UI */
+
+.puzzle-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 14px;
+  align-items: start;
+}
+
+.puzzle-grid-wrap {
+  display: grid;
+  gap: 10px;
+}
+
+.puzzle-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(183, 240, 0, 0.35);
+  background: rgba(183, 240, 0, 0.12);
+  color: var(--text);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.puzzle-bar-text {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.3;
+}
+
+.crossword {
+  --cell: clamp(32px, 6.2vw, 44px);
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--cell));
+  grid-template-rows: repeat(var(--rows), var(--cell));
+  gap: 3px;
+  padding: 10px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  touch-action: manipulation;
+}
+
+.cell {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: var(--cell);
+  height: var(--cell);
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+.cell:focus-visible {
+  outline-offset: 2px;
+}
+
+.cell.block {
+  background: rgba(0, 0, 0, 0.5);
+  border-color: rgba(255, 255, 255, 0.08);
+  cursor: default;
+}
+
+.cell .num {
+  position: absolute;
+  top: 6px;
+  left: 7px;
+  font-size: 10px;
+  line-height: 1;
+  color: rgba(232, 237, 246, 0.75);
+  font-weight: 700;
+}
+
+.cell .val {
+  font-size: 16px;
+}
+
+.cell.in-word {
+  border-color: rgba(183, 240, 0, 0.38);
+  background: rgba(183, 240, 0, 0.08);
+}
+
+.cell.active {
+  border-color: rgba(183, 240, 0, 0.85);
+  box-shadow: 0 0 0 3px rgba(183, 240, 0, 0.12);
+  background: rgba(183, 240, 0, 0.14);
+}
+
+/* Session 9: Gameplay toolbar layout */
+
+/* One-line gameplay toolbar */
+.gameplay-controls {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+
+  flex-wrap: wrap; /* wraps gracefully on smaller screens */
+}
+
+/* Logical button group */
+.control-group {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+/* Push Reset/New to the right */
+.control-group-end {
+  margin-left: auto;
+}
+
+/* Make Reveal feel secondary */
+#revealLetterBtn,
+#revealWordBtn,
+#revealPuzzleBtn {
+  color: var(--muted);
+}
+
+#revealLetterBtn:hover,
+#revealWordBtn:hover,
+#revealPuzzleBtn:hover {
+  color: var(--text);
+}
+
+/* Status sits quietly */
+.check-status {
+  flex-basis: 100%;
+  margin-top: 4px;
+  padding-left: 4px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.btn-mini {
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.check-status.is-win {
+  font-weight: 800;
+  color: var(--text);
+  animation: win-pop 520ms ease-out 1;
+}
+
+@keyframes win-pop {
+  0% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.puzzle-solved .cell:not(.block) {
+  border-color: rgba(183, 240, 0, 0.55);
+}
+
+/* Visual feedback on cells */
+.cell.is-correct {
+  border-color: rgba(183, 240, 0, 0.85);
+  background: rgba(183, 240, 0, 0.16);
+}
+
+.cell.is-incorrect {
+  border-color: rgba(255, 90, 90, 0.85);
+  background: rgba(255, 90, 90, 0.12);
+}
+
+.clues {
+  display: grid;
+  gap: 12px;
+}
+
+.clues-section {
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.clues-title {
+  margin: 0 0 10px;
+  font-size: 13px;
+  letter-spacing: 0.2px;
+}
+
+.clue-list {
+  margin: 0;
+  padding: 0;
+  list-style: none; /* remove the auto 1,2,3 numbering */
+  display: grid;
+  gap: 6px;
+}
+
+.clue {
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.3;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+}
+
+.clue:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+}
+
+.clue.is-active {
+  border-color: rgba(183, 240, 0, 0.45);
+  background: rgba(183, 240, 0, 0.1);
+  color: var(--text);
+}
+
+/* Stack clues under the grid on smaller screens */
+@media (max-width: 900px) {
+  .puzzle-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.site-footer {
+  padding: 0 0 22px;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.mobile-only {
+  display: none;
+}
+
+/* Collapsed state for config panel (mobile) */
+.panel.is-collapsed {
+  display: none;
+}
+
+/* Responsive behavior
+   The goal: comfortable on phones, still nice on desktop. */
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Phone-focused tweaks */
+@media (max-width: 520px) {
+  .mobile-only {
+    display: block;
+    margin-bottom: 10px;
+  }
+
+  .stage {
+    min-height: calc(100vh - 140px);
+  }
+
+  .stage-top {
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .site-header {
+    padding: 14px 14px 0;
+  }
+
+  .brand {
+    gap: 10px;
+  }
+
+  .brand-title {
+    font-size: 16px;
+  }
+
+  .brand-subtitle {
+    font-size: 12px;
+  }
+
+  .layout {
+    margin-top: 14px;
+    padding: 0 14px 18px;
+    gap: 12px;
+  }
+
+  .panel {
+    padding: 14px;
+  }
+
+  /* Bigger tap targets */
+  select {
+    padding: 12px 12px;
+    border-radius: 12px;
+    font-size: 16px; /* prevents iOS zoom on focus */
+  }
+
+  .btn-primary {
+    padding: 13px 12px;
+    font-size: 16px;
+  }
+
+  .btn-secondary {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text);
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .stage {
+    min-height: 240px;
+  }
+
+  .stage-card {
+    padding: 14px;
+  }
+
+  /* Mobile: gameplay toolbar should fit, not overflow */
+  .gameplay-controls {
+    gap: 8px;
+    padding: 10px;
+  }
+
+  /* Each group becomes its own row */
+  .control-group {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  /* Don't push Reset/New off-screen on mobile */
+  .control-group-end {
+    margin-left: 0;
+  }
+
+  /* Slightly smaller buttons for mobile */
+  .btn-mini {
+    padding: 7px 9px;
+    font-size: 11px;
+  }
+
+  /* Mobile: ensure even the largest grid fits */
+  .crossword {
+    --cell: clamp(20px, 5.6vmin, 32px);
+    gap: 2px;
+    padding: 6px;
+  }
+
+  /* Prevent tiny horizontal scroll/clipping from rounding */
+  body {
+    overflow-x: hidden;
+  }
+
+  .stage-card {
+    overflow-x: hidden;
+  }
+
+  .cell {
+    border-radius: 8px;
+  }
+
+  .cell .val {
+    font-size: 14px;
+  }
+
+  .cell .num {
+    top: 5px;
+    left: 6px;
+    font-size: 9px;
+  }
+}
