@@ -7,6 +7,8 @@ You choose the difficulty, theme, tone, and grid size. CRSWRD builds the puzzle.
 
 No accounts. No installs. Just puzzles.
 
+<img width="1142" height="578" alt="CRSWRD_Logo_Dark_02" src="https://github.com/user-attachments/assets/d8f1cb9a-5210-4731-adaf-2b499d34c1c3" />
+
 ---
 
 ## Live demo
@@ -92,4 +94,5 @@ This project is licensed under the BSD-3-Clause License.
 Vibe-coded by The BIMsider with ChatGPT.
 
 Built as an experiment in lightweight, client-side game design.
+
 
