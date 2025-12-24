@@ -1,12 +1,14 @@
 # CRSWRD
 
-<img
-  src="https://github.com/user-attachments/assets/d8f1cb9a-5210-4731-adaf-2b499d34c1c3"
-  alt="CRSWRD logo"
-  width="600"
-/>
+<p align="center">
+  <img
+    src="https://github.com/user-attachments/assets/d8f1cb9a-5210-4731-adaf-2b499d34c1c3"
+    alt="CRSWRD logo"
+    width="520"
+  />
+</p>
 
-Build it. Solve it.
+**Build it. Solve it.**
 
 CRSWRD is a lightweight, browser-based crossword generator and solver.
 You choose the difficulty, theme, tone, and grid size. CRSWRD builds the puzzle. You solve it.
@@ -17,14 +19,17 @@ No accounts. No installs. Just puzzles.
 
 ## Live demo
 
-👉 [https://<your-username>.github.io/crswrd/](https://thebimsider.github.io/crswrd/)
+👉 https://thebimsider.github.io/crswrd/
 
-<img
-  src="https://github.com/user-attachments/assets/97889548-15ff-47a5-9d05-f0f01894db2d"
-  alt="CRSWRD in action"
-/>
+<p align="center">
+  <img
+    src="https://github.com/user-attachments/assets/97889548-15ff-47a5-9d05-f0f01894db2d"
+    alt="CRSWRD in action"
+    width="900"
+  />
+</p>
 
-*CRSWRD in action*
+*CRSWRD in action — a puzzle mid-solve.*
 
 ---
 
@@ -52,8 +57,8 @@ No accounts. No installs. Just puzzles.
 
 - Not a daily crossword
 - Not competitive or scored
-- No puzzle history or saving (yet)
-- No guarantees every generated puzzle is perfect (this is a beta)
+- No puzzle saving or history (yet)
+- No guarantee every generated puzzle is perfectly balanced (this is a beta)
 
 ---
 
@@ -84,7 +89,6 @@ Each pack contains 100 curated words and supports multiple grid sizes.
 This is an early beta.
 
 If something breaks or feels off:
-
 - Open a GitHub Issue
 - Include your browser and device
 - Describe what you did and what you expected to happen
@@ -102,18 +106,5 @@ This project is licensed under the BSD-3-Clause License.
 
 ## Credits
 
-Vibe-coded by The BIMsider with ChatGPT.
-
+Vibe-coded by The BIMsider with ChatGPT.  
 Built as an experiment in lightweight, client-side game design.
-
-
-
-
-
-
-
-
-
-
-
-
