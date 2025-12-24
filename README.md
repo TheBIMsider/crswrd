@@ -1,13 +1,20 @@
 # CRSWRD
 
+<p align="center">
+  <img
+    src="https://github.com/user-attachments/assets/d8f1cb9a-5210-4731-adaf-2b499d34c1c3"
+    alt="CRSWRD logo"
+    width="400"
+  />
+</p>
+
+
 Build it. Solve it.
 
 CRSWRD is a lightweight, browser-based crossword generator and solver.
 You choose the difficulty, theme, tone, and grid size. CRSWRD builds the puzzle. You solve it.
 
 No accounts. No installs. Just puzzles.
-
-<img width="1142" height="578" alt="CRSWRD_Logo_Dark_02" src="https://github.com/user-attachments/assets/d8f1cb9a-5210-4731-adaf-2b499d34c1c3" />
 
 ---
 
@@ -94,5 +101,6 @@ This project is licensed under the BSD-3-Clause License.
 Vibe-coded by The BIMsider with ChatGPT.
 
 Built as an experiment in lightweight, client-side game design.
+
 
 
