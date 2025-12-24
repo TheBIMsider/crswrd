@@ -19,6 +19,8 @@ No accounts. No installs. Just puzzles.
 
 👉 [https://<your-username>.github.io/crswrd/](https://thebimsider.github.io/crswrd/)
 
+<img width="1446" height="968" alt="CRSWRD_Readme_Sample" src="https://github.com/user-attachments/assets/97889548-15ff-47a5-9d05-f0f01894db2d" />
+
 ---
 
 ## How to play (30 seconds)
@@ -98,6 +100,7 @@ This project is licensed under the BSD-3-Clause License.
 Vibe-coded by The BIMsider with ChatGPT.
 
 Built as an experiment in lightweight, client-side game design.
+
 
 
 
