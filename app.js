@@ -2777,14 +2777,12 @@ function makeClueItem(entry) {
   return li;
 }
 
-function hasAcrossAt(state, r, c) {
-  const k = keyRC(r, c);
-  return Boolean(state.entryMapAcross && state.entryMapAcross.get(k));
+function hasAcrossAt(model, r, c) {
+  return model.acrossByCell.has(keyRC(r, c));
 }
 
-function hasDownAt(state, r, c) {
-  const k = keyRC(r, c);
-  return Boolean(state.entryMapDown && state.entryMapDown.get(k));
+function hasDownAt(model, r, c) {
+  return model.downByCell.has(keyRC(r, c));
 }
 
 function wireCrosswordInteractions(host, acrossList, downList, model, state) {
@@ -2850,8 +2848,8 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
       state.direction = state.direction === 'across' ? 'down' : 'across';
     } else {
       // NEW: if the cell belongs to only one direction, force it
-      const a = hasAcrossAt(state, r, c);
-      const d = hasDownAt(state, r, c);
+      const a = hasAcrossAt(model, r, c);
+      const d = hasDownAt(model, r, c);
 
       if (a && !d) state.direction = 'across';
       else if (d && !a) state.direction = 'down';
