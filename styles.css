@@ -512,6 +512,28 @@ select:focus {
   color: var(--text);
 }
 
+/* Mobile keyboard bridge input (hidden on all sizes) */
+.mobile-input {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 1px;
+  height: 1px;
+
+  opacity: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+
+  background: transparent;
+  color: transparent;
+  caret-color: transparent;
+
+  pointer-events: none;
+  outline: none;
+  z-index: -1;
+}
+
 /* Stack clues under the grid on smaller screens */
 @media (max-width: 900px) {
   .puzzle-layout {
@@ -618,26 +640,6 @@ select:focus {
   /* Mobile keyboard bridge:
     We focus this input on phones so the on-screen keyboard appears,
    but all visible interaction remains on the grid. */
-  .mobile-input {
-    position: fixed;
-    left: 0;
-    bottom: 0;
-    width: 1px;
-    height: 1px;
-
-    opacity: 0;
-    border: 0;
-    padding: 0;
-    margin: 0;
-
-    background: transparent;
-    color: transparent;
-    caret-color: transparent;
-
-    pointer-events: none;
-    outline: none;
-    z-index: -1;
-  }
 
   /* Mobile: gameplay toolbar should fit, not overflow */
   .gameplay-controls {
