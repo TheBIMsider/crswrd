@@ -2807,6 +2807,12 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
     isDragging = true;
     host.setPointerCapture(e.pointerId);
 
+    // NEW: if the cell is only in one direction, force it
+    const a = hasAcrossAt(model, pos.r, pos.c);
+    const d = hasDownAt(model, pos.r, pos.c);
+    if (a && !d) state.direction = 'across';
+    else if (d && !a) state.direction = 'down';
+
     // Drag is about moving selection, not toggling direction.
     setActiveCell(model, state, pos.r, pos.c, state.direction);
     syncUI(host, acrossList, downList, model, state);
@@ -2819,6 +2825,12 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
 
     const pos = getCellFromPointerEvent(e);
     if (!pos) return;
+
+    // NEW: force direction if this cell only belongs to one
+    const a = hasAcrossAt(model, pos.r, pos.c);
+    const d = hasDownAt(model, pos.r, pos.c);
+    if (a && !d) state.direction = 'across';
+    else if (d && !a) state.direction = 'down';
 
     if (state.active.r === pos.r && state.active.c === pos.c) return;
 
