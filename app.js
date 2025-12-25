@@ -2789,12 +2789,9 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
   // Pointer drag selection (mouse or touch)
   let isDragging = false;
 
-  function getCellFromPointerEvent(e) {
-    const el = document.elementFromPoint(e.clientX, e.clientY);
-    const btn = el ? el.closest('.cell') : null;
-    if (!btn || btn.classList.contains('block')) return null;
-    return { r: Number(btn.dataset.r), c: Number(btn.dataset.c) };
-  }
+  // Prevent pointerdown + click from both firing the same action (common on mobile)
+  let lastPointerDownAt = 0;
+  let lastPointerDownKey = '';
 
   function cellDirs(r, c) {
     const k = keyRC(r, c);
@@ -2803,12 +2800,40 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
     return { a, d, k };
   }
 
+  function resolveDirectionForCell({ r, c, isSameCell, isToggle }) {
+    const { a, d } = cellDirs(r, c);
+
+    // If only one direction exists, force it (always).
+    if (a && !d) return 'across';
+    if (d && !a) return 'down';
+
+    // Intersection:
+    // - Desktop toggles only on explicit toggle action (dblclick)
+    // - Mobile toggles when tapping the same cell
+    if (isToggle) {
+      return state.direction === 'across' ? 'down' : 'across';
+    }
+
+    // Otherwise keep current direction
+    return state.direction;
+  }
+
+  function getCellFromPointerEvent(e) {
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const btn = el ? el.closest('.cell') : null;
+    if (!btn || btn.classList.contains('block')) return null;
+    return { r: Number(btn.dataset.r), c: Number(btn.dataset.c) };
+  }
+
   host.addEventListener('pointerdown', (e) => {
     const pos = getCellFromPointerEvent(e);
     if (!pos) return;
 
     isDragging = true;
     host.setPointerCapture(e.pointerId);
+
+    lastPointerDownAt = Date.now();
+    lastPointerDownKey = `${pos.r},${pos.c}`;
 
     // If this cell is only one direction, force it
     const { a, d } = cellDirs(pos.r, pos.c);
@@ -2854,6 +2879,14 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
 
     const r = Number(btn.dataset.r);
     const c = Number(btn.dataset.c);
+
+    const now = Date.now();
+    const clickKey = `${r},${c}`;
+
+    // If this click is just the "after pointerdown" click, ignore it.
+    if (now - lastPointerDownAt < 320 && clickKey === lastPointerDownKey) {
+      return;
+    }
 
     const { a, d } = cellDirs(r, c);
     const isSameCell = state.active.r === r && state.active.c === c;
@@ -2998,6 +3031,16 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
     setTimeout(() => focusMobileInput(), 0);
   }
 
+  // Mobile: use pointerdown so the clue does not take focus first (reduces flicker)
+  function handleCluePointerDown(e) {
+    if (!isTouchLikely()) return;
+    e.preventDefault();
+    handleClueActivate(e.target);
+  }
+
+  acrossList.addEventListener('pointerdown', handleCluePointerDown);
+  downList.addEventListener('pointerdown', handleCluePointerDown);
+
   acrossList.addEventListener('click', (e) => handleClueActivate(e.target));
   downList.addEventListener('click', (e) => handleClueActivate(e.target));
 
@@ -3073,7 +3116,14 @@ function syncClueHighlight(acrossList, downList, model, state) {
   const activeLi = list.querySelector(
     `.clue[data-dir="${entry.dir}"][data-start-key="${entry.startKey}"]`
   );
-  if (activeLi) activeLi.classList.add('is-active');
+  if (activeLi) {
+    activeLi.classList.add('is-active');
+
+    // Mobile: keep the active clue visible
+    if (isTouchLikely()) {
+      activeLi.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    }
+  }
 }
 
 function setCellValue(host, model, state, r, c, value) {
