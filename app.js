@@ -2777,6 +2777,16 @@ function makeClueItem(entry) {
   return li;
 }
 
+function hasAcrossAt(state, r, c) {
+  const k = keyRC(r, c);
+  return Boolean(state.entryMapAcross && state.entryMapAcross.get(k));
+}
+
+function hasDownAt(state, r, c) {
+  const k = keyRC(r, c);
+  return Boolean(state.entryMapDown && state.entryMapDown.get(k));
+}
+
 function wireCrosswordInteractions(host, acrossList, downList, model, state) {
   // Pointer drag selection (mouse or touch)
   // Goal: you can slide across cells to move selection, without typing.
@@ -2838,6 +2848,14 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
     // Clicking same cell toggles direction (but dragging does not)
     if (!isDragging && state.active.r === r && state.active.c === c) {
       state.direction = state.direction === 'across' ? 'down' : 'across';
+    } else {
+      // NEW: if the cell belongs to only one direction, force it
+      const a = hasAcrossAt(state, r, c);
+      const d = hasDownAt(state, r, c);
+
+      if (a && !d) state.direction = 'across';
+      else if (d && !a) state.direction = 'down';
+      // if (a && d) leave direction unchanged
     }
 
     setActiveCell(model, state, r, c, state.direction);
