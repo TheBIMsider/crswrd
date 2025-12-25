@@ -22,20 +22,21 @@ function getMobileInput() {
 }
 
 function focusMobileInput() {
-  const input = getMobileInput();
+  const input = $('mobileInput');
   if (!input) return;
-  if (!isTouchLikely()) return;
 
-  // If it's already focused, don't thrash focus (can flicker keyboards).
   if (document.activeElement === input) return;
 
-  input.value = '';
+  const x = window.scrollX;
+  const y = window.scrollY;
 
   try {
     input.focus({ preventScroll: true });
   } catch {
     input.focus();
   }
+
+  requestAnimationFrame(() => window.scrollTo(x, y));
 }
 
 let MOBILE_FOCUS_LOCK_UNTIL = 0;
