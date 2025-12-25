@@ -9,8 +9,10 @@ let MOBILE_INPUT = null;
 
 function isTouchLikely() {
   return (
+    // Do NOT infer touch just from viewport width.
+    // On desktop, a narrow window should still behave like desktop.
     window.matchMedia('(pointer: coarse)').matches ||
-    window.matchMedia('(max-width: 900px)').matches
+    window.matchMedia('(hover: none)').matches
   );
 }
 
@@ -24,6 +26,9 @@ function focusMobileInput() {
   const input = getMobileInput();
   if (!input) return;
   if (!isTouchLikely()) return;
+
+  // If it's already focused, don't thrash focus (can flicker keyboards).
+  if (document.activeElement === input) return;
 
   input.value = '';
 
@@ -2826,6 +2831,10 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
   }
 
   host.addEventListener('pointerdown', (e) => {
+    // Touch: prevent the grid button from taking focus.
+    // This keeps the hidden input as the single focus owner.
+    if (isTouchLikely()) e.preventDefault();
+
     const pos = getCellFromPointerEvent(e);
     if (!pos) return;
 
@@ -2843,7 +2852,7 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
     setActiveCell(model, state, pos.r, pos.c, state.direction);
     syncUI(host, acrossList, downList, model, state);
     focusCellButton(host, pos.r, pos.c);
-    setTimeout(() => focusMobileInput(), 0);
+    if (isTouchLikely()) focusMobileInput();
   });
 
   host.addEventListener('pointermove', (e) => {
@@ -2874,6 +2883,14 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
 
   // Click/tap on a cell
   host.addEventListener('click', (e) => {
+    // Mobile selection is handled by pointerdown only.
+    // Letting click run as well causes focus churn and keyboard flicker.
+    if (isTouchLikely()) {
+      // Prevent the browser from moving focus onto the grid button.
+      if (e.target.closest('.cell')) e.preventDefault();
+      return;
+    }
+
     const btn = e.target.closest('.cell');
     if (!btn || btn.classList.contains('block')) return;
 
@@ -2911,7 +2928,7 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
     setActiveCell(model, state, r, c, state.direction);
     syncUI(host, acrossList, downList, model, state);
     focusCellButton(host, r, c);
-    setTimeout(() => focusMobileInput(), 0);
+    // Desktop only
   });
 
   // Desktop: double click toggles direction on intersections only
@@ -3028,7 +3045,7 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
     setActiveCell(model, state, entry.start.r, entry.start.c, dir);
     syncUI(host, acrossList, downList, model, state);
     focusCellButton(host, entry.start.r, entry.start.c);
-    setTimeout(() => focusMobileInput(), 0);
+    if (isTouchLikely()) focusMobileInput();
   }
 
   // Mobile: use pointerdown so the clue does not take focus first (reduces flicker)
@@ -3041,8 +3058,14 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
   acrossList.addEventListener('pointerdown', handleCluePointerDown);
   downList.addEventListener('pointerdown', handleCluePointerDown);
 
-  acrossList.addEventListener('click', (e) => handleClueActivate(e.target));
-  downList.addEventListener('click', (e) => handleClueActivate(e.target));
+  acrossList.addEventListener('click', (e) => {
+    if (isTouchLikely()) return;
+    handleClueActivate(e.target);
+  });
+  downList.addEventListener('click', (e) => {
+    if (isTouchLikely()) return;
+    handleClueActivate(e.target);
+  });
 
   acrossList.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
@@ -3495,8 +3518,9 @@ function wireMobileKeyboard() {
     if (isInteractiveControl(document.activeElement)) return;
     if (Date.now() < MOBILE_FOCUS_LOCK_UNTIL) return;
 
-    // Otherwise, keep the keyboard alive
-    setTimeout(() => focusMobileInput(), 80);
+    // Otherwise, keep the keyboard alive.
+    // Use rAF instead of timers to avoid focus thrash during tap transitions.
+    requestAnimationFrame(() => focusMobileInput());
   });
 }
 
