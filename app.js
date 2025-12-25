@@ -2888,32 +2888,26 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
     setTimeout(() => focusMobileInput(), 0);
   });
 
-  // Click/tap on a cell
-host.addEventListener('click', (e) => {
-  ... your existing code ...
-});
+  // ✅ ADD FIX 2 RIGHT HERE (immediately after the click handler)
+  host.addEventListener('dblclick', (e) => {
+    if (isTouchLikely()) return;
 
-// ✅ ADD FIX 2 RIGHT HERE (immediately after the click handler)
-host.addEventListener('dblclick', (e) => {
-  if (isTouchLikely()) return;
+    const btn = e.target.closest('.cell');
+    if (!btn || btn.classList.contains('block')) return;
 
-  const btn = e.target.closest('.cell');
-  if (!btn || btn.classList.contains('block')) return;
+    const r = Number(btn.dataset.r);
+    const c = Number(btn.dataset.c);
 
-  const r = Number(btn.dataset.r);
-  const c = Number(btn.dataset.c);
+    const a = hasAcrossAt(model, r, c);
+    const d = hasDownAt(model, r, c);
+    if (!(a && d)) return; // only toggle on intersections
 
-  const a = hasAcrossAt(model, r, c);
-  const d = hasDownAt(model, r, c);
-  if (!(a && d)) return; // only toggle on intersections
+    state.direction = state.direction === 'across' ? 'down' : 'across';
 
-  state.direction = state.direction === 'across' ? 'down' : 'across';
-
-  setActiveCell(model, state, r, c, state.direction);
-  focusCellButton(host, r, c);
-  syncUI(host, acrossList, downList, model, state);
-});
-
+    setActiveCell(model, state, r, c, state.direction);
+    focusCellButton(host, r, c);
+    syncUI(host, acrossList, downList, model, state);
+  });
 
   // Keyboard input and navigation on the grid
   host.addEventListener('keydown', (e) => {
