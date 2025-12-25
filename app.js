@@ -2787,17 +2787,20 @@ function hasDownAt(model, r, c) {
 
 function wireCrosswordInteractions(host, acrossList, downList, model, state) {
   // Pointer drag selection (mouse or touch)
-  // Goal: you can slide across cells to move selection, without typing.
   let isDragging = false;
 
   function getCellFromPointerEvent(e) {
     const el = document.elementFromPoint(e.clientX, e.clientY);
     const btn = el ? el.closest('.cell') : null;
     if (!btn || btn.classList.contains('block')) return null;
-    return {
-      r: Number(btn.dataset.r),
-      c: Number(btn.dataset.c),
-    };
+    return { r: Number(btn.dataset.r), c: Number(btn.dataset.c) };
+  }
+
+  function cellDirs(r, c) {
+    const k = keyRC(r, c);
+    const a = model.acrossByCell && model.acrossByCell.has(k);
+    const d = model.downByCell && model.downByCell.has(k);
+    return { a, d, k };
   }
 
   host.addEventListener('pointerdown', (e) => {
@@ -2807,17 +2810,15 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
     isDragging = true;
     host.setPointerCapture(e.pointerId);
 
-    // NEW: if the cell is only in one direction, force it
-    const a = hasAcrossAt(model, pos.r, pos.c);
-    const d = hasDownAt(model, pos.r, pos.c);
+    // If this cell is only one direction, force it
+    const { a, d } = cellDirs(pos.r, pos.c);
     if (a && !d) state.direction = 'across';
     else if (d && !a) state.direction = 'down';
 
-    // Drag is about moving selection, not toggling direction.
     setActiveCell(model, state, pos.r, pos.c, state.direction);
     syncUI(host, acrossList, downList, model, state);
     focusCellButton(host, pos.r, pos.c);
-    focusMobileInput();
+    setTimeout(() => focusMobileInput(), 0);
   });
 
   host.addEventListener('pointermove', (e) => {
@@ -2826,9 +2827,8 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
     const pos = getCellFromPointerEvent(e);
     if (!pos) return;
 
-    // NEW: force direction if this cell only belongs to one
-    const a = hasAcrossAt(model, pos.r, pos.c);
-    const d = hasDownAt(model, pos.r, pos.c);
+    // If this cell is only one direction, force it
+    const { a, d } = cellDirs(pos.r, pos.c);
     if (a && !d) state.direction = 'across';
     else if (d && !a) state.direction = 'down';
 
@@ -2855,58 +2855,48 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
     const r = Number(btn.dataset.r);
     const c = Number(btn.dataset.c);
 
-    const a = hasAcrossAt(model, r, c);
-    const d = hasDownAt(model, r, c);
+    const { a, d } = cellDirs(r, c);
     const isSameCell = state.active.r === r && state.active.c === c;
 
-    if (!isDragging && isSameCell) {
+    if (!isDragging) {
       if (isTouchLikely()) {
-        // Mobile: only toggle on intersections
-        if (a && d) {
+        // Mobile: toggle only on intersections when tapping the same cell
+        if (isSameCell && a && d) {
           state.direction = state.direction === 'across' ? 'down' : 'across';
-        } else if (a && !d) {
-          state.direction = 'across';
-        } else if (d && !a) {
-          state.direction = 'down';
+        } else {
+          // New cell: if only one direction, force it
+          if (a && !d) state.direction = 'across';
+          else if (d && !a) state.direction = 'down';
         }
       } else {
-        // Desktop: single click does not toggle direction
-        // (dblclick will handle intersections)
+        // Desktop: never toggle on single click
         if (a && !d) state.direction = 'across';
         else if (d && !a) state.direction = 'down';
       }
-    } else {
-      // New cell: if it belongs to only one direction, force it
-      if (a && !d) state.direction = 'across';
-      else if (d && !a) state.direction = 'down';
-      // if (a && d) leave direction as-is
     }
 
     setActiveCell(model, state, r, c, state.direction);
-    focusCellButton(host, r, c);
     syncUI(host, acrossList, downList, model, state);
+    focusCellButton(host, r, c);
     setTimeout(() => focusMobileInput(), 0);
   });
 
-  // ✅ ADD FIX 2 RIGHT HERE (immediately after the click handler)
+  // Desktop: double click toggles direction on intersections only
   host.addEventListener('dblclick', (e) => {
-    if (isTouchLikely()) return;
-
+    if (isTouchLikely()) return; // ignore mobile double-tap weirdness
     const btn = e.target.closest('.cell');
     if (!btn || btn.classList.contains('block')) return;
 
     const r = Number(btn.dataset.r);
     const c = Number(btn.dataset.c);
+    const { a, d } = cellDirs(r, c);
 
-    const a = hasAcrossAt(model, r, c);
-    const d = hasDownAt(model, r, c);
-    if (!(a && d)) return; // only toggle on intersections
-
-    state.direction = state.direction === 'across' ? 'down' : 'across';
-
-    setActiveCell(model, state, r, c, state.direction);
-    focusCellButton(host, r, c);
-    syncUI(host, acrossList, downList, model, state);
+    if (a && d) {
+      state.direction = state.direction === 'across' ? 'down' : 'across';
+      setActiveCell(model, state, r, c, state.direction);
+      syncUI(host, acrossList, downList, model, state);
+      focusCellButton(host, r, c);
+    }
   });
 
   // Keyboard input and navigation on the grid
@@ -2917,7 +2907,6 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
     const r = Number(btn.dataset.r);
     const c = Number(btn.dataset.c);
 
-    // Keep active cell in sync with focus
     if (state.active.r !== r || state.active.c !== c) {
       setActiveCell(model, state, r, c, state.direction);
       syncUI(host, acrossList, downList, model, state);
@@ -2925,24 +2914,16 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
 
     const key = e.key;
 
-    // Tab behavior:
-    // - Tab (forward): move from grid into the clue list (prefer the active clue)
-    // - Shift+Tab (back): let the browser handle it (don’t trap it)
     if (key === 'Tab' && !e.shiftKey) {
       e.preventDefault();
-
-      // Prefer focusing the currently active clue so we don’t jump the user around.
-      // Fallback to the first Across clue, then first Down clue.
       const activeClue =
         document.querySelector('.clue.is-active') ||
         acrossList.querySelector('.clue') ||
         downList.querySelector('.clue');
-
       if (activeClue) activeClue.focus();
       return;
     }
 
-    // Letters
     if (key.length === 1 && /[a-zA-Z]/.test(key)) {
       e.preventDefault();
       setCellValue(host, model, state, r, c, key.toUpperCase());
@@ -2951,15 +2932,13 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
       return;
     }
 
-    // Backspace clears
     if (key === 'Backspace') {
       e.preventDefault();
       const currentKey = keyRC(r, c);
       const hasValue = Boolean(state.filled.get(currentKey));
 
-      if (hasValue) {
-        setCellValue(host, model, state, r, c, '');
-      } else {
+      if (hasValue) setCellValue(host, model, state, r, c, '');
+      else {
         movePrev(host, model, state);
         setCellValue(host, model, state, state.active.r, state.active.c, '');
       }
@@ -2969,7 +2948,6 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
       return;
     }
 
-    // Arrows move and also set direction
     if (key === 'ArrowLeft') {
       e.preventDefault();
       state.direction = 'across';
@@ -3015,55 +2993,25 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
 
     state.direction = dir;
     setActiveCell(model, state, entry.start.r, entry.start.c, dir);
-
     syncUI(host, acrossList, downList, model, state);
     focusCellButton(host, entry.start.r, entry.start.c);
-    focusMobileInput();
+    setTimeout(() => focusMobileInput(), 0);
   }
 
   acrossList.addEventListener('click', (e) => handleClueActivate(e.target));
   downList.addEventListener('click', (e) => handleClueActivate(e.target));
 
-  // Keyboard activate clue (Enter/Space)
-  function handleClueKeydown(e) {
-    const el = e.target.closest('.clue');
-    if (!el) return;
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      handleClueActivate(el);
-    }
-  }
+  acrossList.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    handleClueActivate(e.target);
+  });
 
-  acrossList.addEventListener('keydown', handleClueKeydown);
-  downList.addEventListener('keydown', handleClueKeydown);
-
-  // Focus highlight for clues (tabbing)
-  // Highlight the clue and word, but do not move the active grid cursor.
-  function handleClueFocus(e) {
-    const el = e.target.closest('.clue');
-    if (!el) return;
-
-    const dir = el.dataset.dir;
-    const startKey = el.dataset.startKey;
-    const entry = getEntryByStartKey(model, dir, startKey);
-    if (!entry) return;
-
-    // Temporarily highlight that entry
-    const prevActive = { ...state.active };
-    const prevDir = state.direction;
-
-    state.direction = dir;
-    state.active = { r: entry.start.r, c: entry.start.c };
-    syncUI(host, acrossList, downList, model, state);
-
-    // Restore immediately so typing continues where the user was
-    state.direction = prevDir;
-    state.active = prevActive;
-    syncUI(host, acrossList, downList, model, state);
-  }
-
-  acrossList.addEventListener('focusin', handleClueFocus);
-  downList.addEventListener('focusin', handleClueFocus);
+  downList.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    e.preventDefault();
+    handleClueActivate(e.target);
+  });
 }
 
 function syncUI(host, acrossList, downList, model, state) {
