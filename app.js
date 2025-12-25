@@ -2855,17 +2855,31 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
     const r = Number(btn.dataset.r);
     const c = Number(btn.dataset.c);
 
-    // Clicking same cell toggles direction (but dragging does not)
-    if (!isDragging && state.active.r === r && state.active.c === c) {
-      state.direction = state.direction === 'across' ? 'down' : 'across';
-    } else {
-      // NEW: if the cell belongs to only one direction, force it
-      const a = hasAcrossAt(model, r, c);
-      const d = hasDownAt(model, r, c);
+    const a = hasAcrossAt(model, r, c);
+    const d = hasDownAt(model, r, c);
+    const isSameCell = state.active.r === r && state.active.c === c;
 
+    if (!isDragging && isSameCell) {
+      if (isTouchLikely()) {
+        // Mobile: only toggle on intersections
+        if (a && d) {
+          state.direction = state.direction === 'across' ? 'down' : 'across';
+        } else if (a && !d) {
+          state.direction = 'across';
+        } else if (d && !a) {
+          state.direction = 'down';
+        }
+      } else {
+        // Desktop: single click does not toggle direction
+        // (dblclick will handle intersections)
+        if (a && !d) state.direction = 'across';
+        else if (d && !a) state.direction = 'down';
+      }
+    } else {
+      // New cell: if it belongs to only one direction, force it
       if (a && !d) state.direction = 'across';
       else if (d && !a) state.direction = 'down';
-      // if (a && d) leave direction unchanged
+      // if (a && d) leave direction as-is
     }
 
     setActiveCell(model, state, r, c, state.direction);
@@ -2873,6 +2887,33 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
     syncUI(host, acrossList, downList, model, state);
     setTimeout(() => focusMobileInput(), 0);
   });
+
+  // Click/tap on a cell
+host.addEventListener('click', (e) => {
+  ... your existing code ...
+});
+
+// ✅ ADD FIX 2 RIGHT HERE (immediately after the click handler)
+host.addEventListener('dblclick', (e) => {
+  if (isTouchLikely()) return;
+
+  const btn = e.target.closest('.cell');
+  if (!btn || btn.classList.contains('block')) return;
+
+  const r = Number(btn.dataset.r);
+  const c = Number(btn.dataset.c);
+
+  const a = hasAcrossAt(model, r, c);
+  const d = hasDownAt(model, r, c);
+  if (!(a && d)) return; // only toggle on intersections
+
+  state.direction = state.direction === 'across' ? 'down' : 'across';
+
+  setActiveCell(model, state, r, c, state.direction);
+  focusCellButton(host, r, c);
+  syncUI(host, acrossList, downList, model, state);
+});
+
 
   // Keyboard input and navigation on the grid
   host.addEventListener('keydown', (e) => {
