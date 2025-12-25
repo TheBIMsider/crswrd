@@ -2701,6 +2701,7 @@ function createCrosswordState(model) {
     filled,
     marks,
     isSolved: false,
+    lastActivationSource: 'init',
   };
 }
 
@@ -2925,6 +2926,8 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
       }
     }
 
+
+    state.lastActivationSource = 'cell';
     setActiveCell(model, state, r, c, state.direction);
     syncUI(host, acrossList, downList, model, state);
     focusCellButton(host, r, c);
@@ -3036,6 +3039,8 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
     const el = target.closest('.clue');
     if (!el) return;
 
+
+    state.lastActivationSource = 'clue';
     const dir = el.dataset.dir;
     const startKey = el.dataset.startKey;
     const entry = getEntryByStartKey(model, dir, startKey);
@@ -3142,11 +3147,11 @@ function syncClueHighlight(acrossList, downList, model, state) {
   if (activeLi) {
     activeLi.classList.add('is-active');
 
-    // Mobile: keep the active clue visible
-    if (isTouchLikely()) {
+    // Mobile: only scroll the clue list when the user actually chose a clue.
+    // If they tapped a cell, keep the grid stable so they can see what they type.
+    if (isTouchLikely() && state.lastActivationSource === 'clue') {
       activeLi.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-    }
-  }
+    }}
 }
 
 function setCellValue(host, model, state, r, c, value) {
@@ -3229,6 +3234,17 @@ function moveTo(host, model, state, r, c, skipBlocks = false) {
 
     rr += axisR;
     cc += axisC;
+  }
+}
+
+
+function scrollCellIntoView(host, r, c) {
+  const btn = host.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
+  if (!btn) return;
+  try {
+    btn.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  } catch {
+    btn.scrollIntoView();
   }
 }
 
