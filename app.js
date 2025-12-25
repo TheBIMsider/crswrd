@@ -8,12 +8,11 @@ let CURRENT = null;
 let MOBILE_INPUT = null;
 
 function isTouchLikely() {
-  return (
-    // Do NOT infer touch just from viewport width.
-    // On desktop, a narrow window should still behave like desktop.
-    window.matchMedia('(pointer: coarse)').matches ||
-    window.matchMedia('(hover: none)').matches
-  );
+  // "Touch-first" device detection
+  // Avoid treating desktop/laptop (even with touchscreen) as mobile.
+  const coarse = window.matchMedia('(pointer: coarse)').matches;
+  const noHover = window.matchMedia('(hover: none)').matches;
+  return coarse && noHover;
 }
 
 function getMobileInput() {
@@ -2701,7 +2700,11 @@ function createCrosswordState(model) {
     filled,
     marks,
     isSolved: false,
-    lastActivationSource: 'init',
+
+    // UI flags for mobile behavior
+    ui: {
+      scrollClueIntoView: false, // only true when user tapped a clue
+    },
   };
 }
 
@@ -2839,6 +2842,15 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
     const pos = getCellFromPointerEvent(e);
     if (!pos) return;
 
+    state.lastActivationSource = 'grid';
+    if (state.ui) state.ui.scrollClueIntoView = false;
+
+    console.log(
+      'GRID pointerdown',
+      'scrollClueIntoView =',
+      state.ui?.scrollClueIntoView
+    );
+
     isDragging = true;
     host.setPointerCapture(e.pointerId);
 
@@ -2925,7 +2937,6 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
         else if (d && !a) state.direction = 'down';
       }
     }
-
 
     state.lastActivationSource = 'cell';
     setActiveCell(model, state, r, c, state.direction);
@@ -3039,7 +3050,6 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
     const el = target.closest('.clue');
     if (!el) return;
 
-
     state.lastActivationSource = 'clue';
     const dir = el.dataset.dir;
     const startKey = el.dataset.startKey;
@@ -3048,6 +3058,7 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
 
     state.direction = dir;
     setActiveCell(model, state, entry.start.r, entry.start.c, dir);
+    state.ui.scrollClueIntoView = true;
     syncUI(host, acrossList, downList, model, state);
     focusCellButton(host, entry.start.r, entry.start.c);
     if (isTouchLikely()) focusMobileInput();
@@ -3147,11 +3158,27 @@ function syncClueHighlight(acrossList, downList, model, state) {
   if (activeLi) {
     activeLi.classList.add('is-active');
 
-    // Mobile: only scroll the clue list when the user actually chose a clue.
-    // If they tapped a cell, keep the grid stable so they can see what they type.
-    if (isTouchLikely() && state.lastActivationSource === 'clue') {
+    // Only auto-scroll the clue list when the user activated a clue.
+    // Grid taps should NOT scroll the page away from the grid.
+    const allowScroll =
+      isTouchLikely() && state?.ui?.scrollClueIntoView === true;
+
+    console.log(
+      'syncClueHighlight',
+      'allowScroll =',
+      allowScroll,
+      'source =',
+      state.lastActivationSource,
+      'flag =',
+      state.ui?.scrollClueIntoView
+    );
+
+    if (allowScroll) {
       activeLi.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-    }}
+      // One-shot: reset after we perform the scroll
+      state.ui.scrollClueIntoView = false;
+    }
+  }
 }
 
 function setCellValue(host, model, state, r, c, value) {
@@ -3236,7 +3263,6 @@ function moveTo(host, model, state, r, c, skipBlocks = false) {
     cc += axisC;
   }
 }
-
 
 function scrollCellIntoView(host, r, c) {
   const btn = host.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
