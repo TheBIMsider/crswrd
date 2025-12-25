@@ -23,17 +23,10 @@ function getMobileInput() {
 function focusMobileInput() {
   const input = getMobileInput();
   if (!input) return;
-
-  // Only do this on touch-ish setups so desktop stays normal.
   if (!isTouchLikely()) return;
 
-  if (Date.now() < MOBILE_FOCUS_LOCK_UNTIL) return;
-  if (isInteractiveControl(document.activeElement)) return;
-
-  // Clear so each keystroke is easy to interpret.
   input.value = '';
 
-  // preventScroll is supported in modern browsers; fallback is harmless.
   try {
     input.focus({ preventScroll: true });
   } catch {
@@ -2848,9 +2841,9 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
     }
 
     setActiveCell(model, state, r, c, state.direction);
-    syncUI(host, acrossList, downList, model, state);
     focusCellButton(host, r, c);
-    focusMobileInput();
+    syncUI(host, acrossList, downList, model, state);
+    setTimeout(() => focusMobileInput(), 0);
   });
 
   // Keyboard input and navigation on the grid
@@ -3156,12 +3149,9 @@ function moveTo(host, model, state, r, c, skipBlocks = false) {
 }
 
 function focusCellButton(host, r, c) {
-  // On touch devices, keep focus on the hidden input
-  // so the on-screen keyboard stays visible.
-  if (isTouchLikely()) {
-    focusMobileInput();
-    return;
-  }
+  // On touch devices, do not focus grid buttons.
+  // Keep focus management centralized (we focus the hidden input from click/clue).
+  if (isTouchLikely()) return;
 
   const btn = host.querySelector(`.cell[data-r="${r}"][data-c="${c}"]`);
   if (btn) btn.focus();
@@ -3439,12 +3429,13 @@ function wireMobileKeyboard() {
 
   input.addEventListener('blur', () => {
     if (!CURRENT || !isTouchLikely()) return;
+
+    // If the user is interacting with real UI controls, back off
+    if (isInteractiveControl(document.activeElement)) return;
     if (Date.now() < MOBILE_FOCUS_LOCK_UNTIL) return;
 
-    // If the user is interacting with real controls, do not steal focus back.
-    if (isInteractiveControl(document.activeElement)) return;
-
-    setTimeout(() => focusMobileInput(), 0);
+    // Otherwise, keep the keyboard alive
+    setTimeout(() => focusMobileInput(), 80);
   });
 }
 

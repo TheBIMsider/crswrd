@@ -637,10 +637,6 @@ select:focus {
     padding: 14px;
   }
 
-  /* Mobile keyboard bridge:
-    We focus this input on phones so the on-screen keyboard appears,
-   but all visible interaction remains on the grid. */
-
   /* Mobile: gameplay toolbar should fit, not overflow */
   .gameplay-controls {
     gap: 8px;
