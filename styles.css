@@ -1,27 +1,74 @@
-/* CRSWRD - Phase 1 styles
-   Dark-first, simple, and readable. */
+/* CRSWRD - styles
+   dark & light mode, simple, and readable. */
 
 :root {
-  /* Colors */
+  /* Theme (dark default) */
   --bg: #0c0f14;
-  --panel: #121826;
-  --panel-2: #0f1522;
   --text: #e8edf6;
   --muted: #aab4c5;
+
   --border: rgba(255, 255, 255, 0.12);
-  --accent: #b7f000; /* lime accent (adjust later if needed) */
+
+  --accent: #b7f000; /* lime accent */
   --accent-ink: #0b1200;
+
+  /* Surfaces */
+  --surface: rgba(18, 24, 38, 0.86);
+  --surface-2: rgba(255, 255, 255, 0.03);
+
+  /* Controls */
   --control-bg: rgba(255, 255, 255, 0.06);
-  --control-bg-open: #121826; /* solid dark for dropdown list */
+  --control-bg-open: #121826; /* dropdown list */
   --control-border: rgba(255, 255, 255, 0.12);
+
+  /* Grid cells */
+  --cell-bg: rgba(255, 255, 255, 0.06);
+  --cell-border: rgba(255, 255, 255, 0.12);
+  --block-bg: rgba(0, 0, 0, 0.5);
+  --block-border: rgba(255, 255, 255, 0.08);
+  --num-color: rgba(232, 237, 246, 0.75);
 
   /* Layout */
   --radius: 14px;
   --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+
+  /* Desktop layout width (was hard-coded 1100px in multiple places) */
+  --page-max: 1400px;
+}
+
+/* Let the browser draw native controls correctly for the theme */
+html {
+  color-scheme: dark;
+}
+
+html[data-theme='light'] {
+  color-scheme: light;
+
+  --bg: #f6f7fb;
+  --text: #0f172a;
+  --muted: #475569;
+
+  --border: rgba(15, 23, 42, 0.12);
+
+  /* Keep the same accent, just let it pop on light */
+  --surface: rgba(255, 255, 255, 0.92);
+  --surface-2: rgba(15, 23, 42, 0.04);
+
+  --control-bg: rgba(15, 23, 42, 0.05);
+  --control-bg-open: #ffffff;
+  --control-border: rgba(15, 23, 42, 0.18);
+
+  --cell-bg: rgba(15, 23, 42, 0.04);
+  --cell-border: rgba(15, 23, 42, 0.14);
+  --block-bg: rgba(15, 23, 42, 0.1);
+  --block-border: rgba(15, 23, 42, 0.12);
+  --num-color: rgba(15, 23, 42, 0.6);
+
+  --shadow: 0 10px 30px rgba(2, 6, 23, 0.12);
 }
 
 .container {
-  max-width: 1100px;
+  max-width: var(--page-max);
   margin: 0 auto;
   padding: 0 18px;
 }
@@ -53,7 +100,7 @@ body {
 }
 
 .site-header .brand {
-  max-width: 1100px;
+  max-width: var(--page-max);
   margin: 0 auto;
 }
 
@@ -65,7 +112,7 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  max-width: 1100px;
+  max-width: var(--page-max);
   margin: 0 auto;
 }
 
@@ -83,7 +130,7 @@ body {
 }
 
 .layout {
-  max-width: 1100px;
+  max-width: var(--page-max);
   margin: 18px auto 0;
   padding: 0 18px 24px;
   display: grid;
@@ -93,7 +140,7 @@ body {
 
 .panel,
 .stage-card {
-  background: rgba(18, 24, 38, 0.86);
+  background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
   box-shadow: var(--shadow);
@@ -128,9 +175,8 @@ select {
   background: var(--control-bg);
   color: var(--text);
   outline: none;
-
   /* Helps browsers render native form controls in dark mode */
-  color-scheme: dark;
+  color-scheme: inherit;
 }
 
 /* Dropdown list (options) styling.
@@ -190,7 +236,7 @@ select:focus {
   padding: 10px 12px;
   border-radius: 12px;
   border: 1px solid var(--border);
-  background: var(--panel);
+  background: var(--surface);
   color: var(--text);
   text-decoration: none;
   transform: translateY(-140%);
@@ -228,11 +274,30 @@ select:focus {
 
 .stage {
   min-height: 340px;
+
+  /* Center the whole play card in the stage column */
+  display: flex;
+  justify-content: center;
 }
 
 .stage-card {
   height: 100%;
   padding: 18px;
+
+  /* Hug the content instead of stretching full width */
+  width: fit-content;
+  max-width: 100%;
+
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.stage-card-inner {
+  /* Let the inner content define the card width */
+  width: 100%;
+
   display: grid;
   align-content: start;
   gap: 8px;
@@ -285,7 +350,28 @@ select:focus {
   padding: 10px 12px;
   border-radius: 12px;
   border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--surface-2);
+}
+
+/* Let the clue use remaining space and truncate cleanly */
+.puzzle-bar-text {
+  flex: 1;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.3;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Right-side “what am I playing” meta */
+.puzzle-bar-meta {
+  margin-left: auto;
+  white-space: nowrap;
+  font-size: 12px;
+  color: var(--muted);
+  opacity: 0.95;
 }
 
 .pill {
@@ -301,12 +387,6 @@ select:focus {
   letter-spacing: 0.2px;
 }
 
-.puzzle-bar-text {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.3;
-}
-
 .crossword {
   --cell: clamp(32px, 6.2vw, 44px);
   display: grid;
@@ -316,7 +396,7 @@ select:focus {
   padding: 10px;
   border-radius: 14px;
   border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--surface-2);
   touch-action: manipulation;
 }
 
@@ -327,8 +407,8 @@ select:focus {
   width: var(--cell);
   height: var(--cell);
   border-radius: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid var(--cell-border);
+  background: var(--cell-bg);
   color: var(--text);
   font-weight: 800;
   letter-spacing: 0.6px;
@@ -341,8 +421,8 @@ select:focus {
 }
 
 .cell.block {
-  background: rgba(0, 0, 0, 0.5);
-  border-color: rgba(255, 255, 255, 0.08);
+  background: var(--block-bg);
+  border-color: var(--block-border);
   cursor: default;
 }
 
@@ -352,7 +432,7 @@ select:focus {
   left: 7px;
   font-size: 10px;
   line-height: 1;
-  color: rgba(232, 237, 246, 0.75);
+  color: var(--num-color);
   font-weight: 700;
 }
 
@@ -382,7 +462,7 @@ select:focus {
   padding: 8px 10px;
   border-radius: 12px;
   border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--surface-2);
 
   flex-wrap: wrap; /* wraps gracefully on smaller screens */
 }
@@ -474,7 +554,7 @@ select:focus {
   padding: 12px;
   border-radius: 14px;
   border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--surface-2);
 }
 
 .clues-title {
@@ -572,7 +652,8 @@ select:focus {
   }
 
   .stage {
-    min-height: calc(100vh - 140px);
+    min-height: max(240px, calc(100vh - 140px));
+    display: block;
   }
 
   .stage-top {
@@ -627,10 +708,6 @@ select:focus {
     color: var(--text);
     cursor: pointer;
     font-weight: 600;
-  }
-
-  .stage {
-    min-height: 240px;
   }
 
   .stage-card {

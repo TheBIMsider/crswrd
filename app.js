@@ -79,6 +79,78 @@ function $(id) {
   return document.getElementById(id);
 }
 
+// -----------------------------
+// Theme
+// -----------------------------
+const THEME_STORAGE_KEY = 'crswrd_theme';
+
+function getSystemTheme() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'dark'
+    : 'light';
+}
+
+function getStoredTheme() {
+  try {
+    const v = localStorage.getItem(THEME_STORAGE_KEY);
+    return v === 'light' || v === 'dark' ? v : null;
+  } catch {
+    return null;
+  }
+}
+
+function setStoredTheme(theme) {
+  try {
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
+  } catch {
+    // If storage is blocked, we still allow toggling for this session.
+  }
+}
+
+function updateThemeToggleLabel(theme) {
+  const btn = $('themeToggleBtn');
+  if (!btn) return;
+
+  const isDark = theme === 'dark';
+
+  // Show the *action*, not the current state
+  // Dark mode  -> offer Light
+  // Light mode -> offer Dark
+  btn.textContent = isDark ? '☀️ Light' : '🌙 Dark';
+
+  btn.setAttribute('aria-pressed', String(isDark));
+  btn.title = `Switch to ${isDark ? 'Light' : 'Dark'} mode`;
+}
+
+function applyTheme(theme) {
+  document.documentElement.dataset.theme = theme;
+  updateThemeToggleLabel(theme);
+}
+
+function initTheme() {
+  const stored = getStoredTheme();
+  const initial = stored || getSystemTheme();
+  applyTheme(initial);
+
+  // If user has NOT explicitly chosen a theme, follow system changes.
+  if (!stored) {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    mq.addEventListener?.('change', () => {
+      if (!getStoredTheme()) applyTheme(getSystemTheme());
+    });
+  }
+
+  const btn = $('themeToggleBtn');
+  if (!btn) return;
+
+  btn.addEventListener('click', () => {
+    const current = document.documentElement.dataset.theme || getSystemTheme();
+    const next = current === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+    setStoredTheme(next);
+  });
+}
+
 function readConfig() {
   return {
     difficulty: $('difficulty').value,
@@ -110,6 +182,8 @@ function collapseConfigPanel(shouldCollapse) {
 }
 
 function init() {
+  initTheme();
+
   const form = $('configForm');
 
   if (!form) {
@@ -182,7 +256,7 @@ function init() {
 }
 
 /**
- * Phase 3: Packs (data-driven puzzles)
+ *  Packs (data-driven puzzles)
  *
  * Schema (per pack):
  * PACKS[packId] = {
@@ -207,10 +281,10 @@ const PACKS = {
   general: {
     id: 'general',
     name: 'General',
-    // Phase 4: Word bank used by the generator (Across-only for now).
+    //  Word bank used by the generator (Across-only for now).
     // Each item can carry tone variants for clues.
     wordBank: [
-      // ── 3-letter glue + fallback coverage (29)
+      // ── 3-letter glue + fallback coverage
       {
         word: 'ERA',
         serious: 'Long period of time',
@@ -290,7 +364,7 @@ const PACKS = {
       },
       { word: 'GOT', serious: 'Received', funny: 'Ended up with' },
 
-      // ── 4-letter sweet spot (20)
+      // ── 4-letter sweet spot
       {
         word: 'AREA',
         serious: 'Space or region',
@@ -340,7 +414,7 @@ const PACKS = {
       },
       { word: 'EDGE', serious: 'The brink', funny: 'Where things get spicy' },
 
-      // ── 5-letter connectors (20)
+      // ── 5-letter connectors
       { word: 'ADIEU', serious: 'French goodbye', funny: 'Fancy “see ya”' },
       {
         word: 'OCEAN',
@@ -390,7 +464,7 @@ const PACKS = {
       { word: 'INNER', serious: 'Inside', funny: 'Core zone' },
       { word: 'LEVEL', serious: 'Flat', funny: 'Even-steven' },
 
-      // ── 6-letter utility (16)
+      // ── 6-letter utility
       { word: 'ACTION', serious: 'Movement', funny: 'Do the thing' },
       {
         word: 'ADVICE',
@@ -436,7 +510,7 @@ const PACKS = {
       },
       { word: 'AMOUNT', serious: 'Quantity', funny: 'How much we’re talking' },
 
-      // ── 7+ anchors (15)
+      // ── 7+ anchors
       { word: 'EXAMPLE', serious: 'Instance', funny: 'Proof by showing' },
       {
         word: 'GENERAL',
@@ -990,6 +1064,2560 @@ const PACKS = {
     ],
   },
 
+  music: {
+    id: 'music',
+    name: 'Music',
+    wordBank: [
+      {
+        word: 'AIR',
+        serious: 'A melodic song or tune',
+        funny: 'What a singer needs to avoid turning blue',
+      },
+      {
+        word: 'ALT',
+        serious: 'Prefix for a high rock genre',
+        funny: 'The key next to "Control" and "Delete"',
+      },
+      {
+        word: 'BAR',
+        serious: 'A measure in music',
+        funny: 'The only place a musician can find a drink',
+      },
+      {
+        word: 'KEY',
+        serious: 'Scale foundation',
+        funny: 'What you lose in your pocket and on a piano',
+      },
+      {
+        word: 'SOL',
+        serious: 'Fifth note of the scale',
+        funny: 'A sun-drenched musical syllable',
+      },
+      {
+        word: 'SAX',
+        serious: 'Jazz wind instrument',
+        funny: "Bill Clinton's favorite brassy woodwind",
+      },
+
+      {
+        word: 'ALTO',
+        serious: 'Lower female voice',
+        funny: 'The singer who lives in the basement of the staff',
+      },
+      {
+        word: 'BASS',
+        serious: 'Lowest musical range',
+        funny: 'A deep sound or a fish with a rhythm',
+      },
+      {
+        word: 'BEAT',
+        serious: 'Rhythmic pulse',
+        funny: 'What a drummer does for a living',
+      },
+      {
+        word: 'CLEF',
+        serious: 'Musical notation symbol',
+        funny: 'A "Treble" maker\'s favorite sign',
+      },
+      {
+        word: 'DUET',
+        serious: 'Performance for two',
+        funny: 'A musical "it takes two to tango"',
+      },
+      {
+        word: 'ECHO',
+        serious: 'Sound reflection',
+        funny: 'The only person who talks back to a singer',
+      },
+      {
+        word: 'FLAT',
+        serious: 'Lowered by a semitone',
+        funny: 'A singer’s nightmare or a tired tire',
+      },
+      {
+        word: 'GONG',
+        serious: 'Large metal percussion',
+        funny: 'A loud way to tell a bad act to leave',
+      },
+      {
+        word: 'HARP',
+        serious: 'Plucked string instrument',
+        funny: 'An angel’s preferred "heavy metal"',
+      },
+      {
+        word: 'HYMN',
+        serious: 'Religious song',
+        funny: 'A song that’s strictly "for him"',
+      },
+      {
+        word: 'JAZZ',
+        serious: 'Improvisational genre',
+        funny: 'Music where the wrong notes are "intentional"',
+      },
+      {
+        word: 'LUTE',
+        serious: 'Renaissance stringed instrument',
+        funny: 'What a medieval rocker used to woo',
+      },
+      {
+        word: 'LYRE',
+        serious: 'Ancient Greek harp',
+        funny: 'A musical instrument that sounds like a fibber',
+      },
+      {
+        word: 'NOTE',
+        serious: 'A single musical tone',
+        funny: 'A written reminder or a sung pitch',
+      },
+      {
+        word: 'OBOE',
+        serious: 'Double-reed woodwind',
+        funny: 'A "wooden ill-wind that nobody blows good"',
+      },
+      {
+        word: 'OPUS',
+        serious: 'A numbered musical work',
+        funny: 'A composer\'s "big deal"',
+      },
+      {
+        word: 'REED',
+        serious: 'Vibrating part of a clarinet',
+        funny: 'A thin piece of wood that tastes like spit',
+      },
+      {
+        word: 'SOLO',
+        serious: 'Performance for one',
+        funny: 'Han’s favorite way to play music?',
+      },
+      {
+        word: 'SONG',
+        serious: 'Vocal composition',
+        funny: 'What you get when you add lyrics to a tune',
+      },
+      {
+        word: 'TRIO',
+        serious: 'Group of three',
+        funny: 'One more than a duet, one less than a quartet',
+      },
+      {
+        word: 'TUNE',
+        serious: 'Melody or pitch',
+        funny: 'Something you can carry in a bucket',
+      },
+      {
+        word: 'BRASS',
+        serious: 'Trumpets, trombones, etc.',
+        funny: 'Instruments that can wake the dead (politely)',
+      },
+      {
+        word: 'TEMPO',
+        serious: 'Speed of the music',
+        funny: 'How fast the drummer is about to ruin your life',
+      },
+      {
+        word: 'BANJO',
+        serious: 'Plucked folk instrument',
+        funny: 'A guitar that went to the bluegrass festival',
+      },
+      {
+        word: 'CELLO',
+        serious: 'Large string instrument',
+        funny: 'A violin that hit a massive growth spurt',
+      },
+      {
+        word: 'CHORD',
+        serious: 'Three or more notes at once',
+        funny: 'A musical "three’s company"',
+      },
+      {
+        word: 'DANCE',
+        serious: 'Rhythmic movement to music',
+        funny: 'What you do when the beat is too good',
+      },
+      {
+        word: 'DIRGE',
+        serious: 'Somber, mournful song',
+        funny: 'The ultimate "buzzkill" at a party',
+      },
+      {
+        word: 'DRUMS',
+        serious: 'Percussion set',
+        funny: "The neighbors' least favorite Christmas gift",
+      },
+      {
+        word: 'FLUTE',
+        serious: 'High-pitched woodwind',
+        funny: 'A silver stick you blow across, not into',
+      },
+      {
+        word: 'GENRE',
+        serious: 'Category of music',
+        funny: 'A fancy word for "what kind of noise is this?"',
+      },
+      {
+        word: 'GUILD',
+        serious: 'Group of musicians',
+        funny: 'A medieval union for lute players',
+      },
+      {
+        word: 'LYRIC',
+        serious: 'Words to a song',
+        funny: 'The part of the song you usually get wrong',
+      },
+      {
+        word: 'MAJOR',
+        serious: 'Scale with a "happy" sound',
+        funny: 'A scale that’s not a "minor" problem',
+      },
+      {
+        word: 'METER',
+        serious: 'Rhythmic structure',
+        funny: 'A musical yardstick',
+      },
+      {
+        word: 'MINOR',
+        serious: 'Scale with a "sad" sound',
+        funny: "A scale that isn't old enough to drive?",
+      },
+      {
+        word: 'ORGAN',
+        serious: 'Pipe-based keyboard',
+        funny: "An instrument that's also a body part",
+      },
+      {
+        word: 'PIANO',
+        serious: '88-keyed instrument',
+        funny: 'A very heavy piece of furniture that sings',
+      },
+      {
+        word: 'RESTS',
+        serious: 'Silence in a score',
+        funny: 'The only time a musician can breathe',
+      },
+      {
+        word: 'SHARP',
+        serious: 'Raised by a semitone',
+        funny: 'A smart-looking note or a knife’s edge',
+      },
+      {
+        word: 'TONAL',
+        serious: 'Having a definite key',
+        funny: "Music that doesn't make your ears bleed",
+      },
+      {
+        word: 'VOICE',
+        serious: 'Vocal instrument',
+        funny: 'The instrument you’re born with',
+      },
+      {
+        word: 'WALTZ',
+        serious: 'Music in 3/4 time',
+        funny: 'A dance that\'s "one, two, three, oops!"',
+      },
+      {
+        word: 'TUBA',
+        serious: 'Largest brass instrument',
+        funny: 'A golden radiator that "om-pahs"',
+      },
+
+      {
+        word: 'ACCENT',
+        serious: 'Emphasis on a note',
+        funny: 'A musical way of showing where you’re from',
+      },
+      {
+        word: 'BALLAD',
+        serious: 'Slow, narrative song',
+        funny: 'A song designed to make teenagers slow-dance',
+      },
+      {
+        word: 'CHORUS',
+        serious: 'Repeated part of a song',
+        funny: 'The part everyone actually knows the words to',
+      },
+      {
+        word: 'FIDDLE',
+        serious: 'Folk term for a violin',
+        funny: 'A violin with an attitude problem',
+      },
+      {
+        word: 'GUITAR',
+        serious: 'Six-stringed favorite',
+        funny: 'The instrument of choice for campfire heroes',
+      },
+      {
+        word: 'LEGATO',
+        serious: 'Smooth, flowing style',
+        funny: 'A style that sounds like musical butter',
+      },
+      {
+        word: 'MEDLEY',
+        serious: 'Series of song snippets',
+        funny: 'A musical "all-you-can-eat" buffet',
+      },
+      {
+        word: 'MODERN',
+        serious: 'Contemporary era',
+        funny: 'Music that sounds like a printer dying',
+      },
+      {
+        word: 'PLAYER',
+        serious: 'Musician or performer',
+        funny: 'Someone who’s just "toying" with an instrument',
+      },
+      {
+        word: 'QUAVER',
+        serious: 'An eighth note',
+        funny: 'A note that’s feeling a little shaky',
+      },
+      {
+        word: 'RECORD',
+        serious: 'Vinyl disc',
+        funny: 'A big black circle that sounds "warm"',
+      },
+      {
+        word: 'RHYTHM',
+        serious: 'Pattern of sound',
+        funny: "What you either have or you don't",
+      },
+      {
+        word: 'SONATA',
+        serious: 'Multi-movement composition',
+        funny: 'A fancy piece for a solo "show-off"',
+      },
+      {
+        word: 'STANCE',
+        serious: "Performer's posture",
+        funny: 'The "rock star pose" in front of the mirror',
+      },
+      {
+        word: 'STRING',
+        serious: 'Violin or guitar part',
+        funny: 'A musical thread that snaps at the worst time',
+      },
+      {
+        word: 'TABLET',
+        serious: 'Modern sheet music host',
+        funny: 'What replaced the heavy folder of paper',
+      },
+      {
+        word: 'TALENT',
+        serious: 'Musical ability',
+        funny: "Something money can't buy, but auto-tune can fake",
+      },
+      {
+        word: 'THRILL',
+        serious: 'Musical trill (variation)',
+        funny: 'What a great solo gives the audience',
+      },
+      {
+        word: 'TREBLE',
+        serious: 'Higher musical range',
+        funny: 'The "clef" that’s always looking for trouble',
+      },
+      {
+        word: 'VIOLIN',
+        serious: 'Smallest string instrument',
+        funny: 'A chin-rest that makes beautiful noises',
+      },
+
+      {
+        word: 'ACADEMY',
+        serious: 'School of music',
+        funny: 'Where you go to learn how to be broke',
+      },
+      {
+        word: 'ANTHEM',
+        serious: 'Song of praise or loyalty',
+        funny: 'A song everyone stands up for',
+      },
+      {
+        word: 'BARITONE',
+        serious: 'Mid-range male voice',
+        funny: 'The "Goldilocks" of male singing voices',
+      },
+      {
+        word: 'CADENCE',
+        serious: 'Closing of a musical phrase',
+        funny: 'The musical way of saying "The End"',
+      },
+      {
+        word: 'CONCERT',
+        serious: 'Live musical performance',
+        funny: 'An expensive way to stand in a crowd',
+      },
+      {
+        word: 'COUNTRY',
+        serious: 'Genre of trucks and dogs',
+        funny: 'Music that’s 10% talent and 90% heartbreak',
+      },
+      {
+        word: 'DYNAMIC',
+        serious: 'Level of volume',
+        funny: 'The "loud and soft" of the situation',
+      },
+      {
+        word: 'FALSETTO',
+        serious: 'Artificially high voice',
+        funny: 'The "Mickey Mouse" school of singing',
+      },
+      {
+        word: 'HARMONY',
+        serious: 'Blending of simultaneous notes',
+        funny: 'When singers actually get along',
+      },
+      {
+        word: 'LULLABY',
+        serious: 'Song to induce sleep',
+        funny: 'A musical way to say "Please stop crying"',
+      },
+      {
+        word: 'MELODIC',
+        serious: 'Having a pleasing tune',
+        funny: "Music that doesn't sound like a construction site",
+      },
+      {
+        word: 'MINSTREL',
+        serious: 'Medieval traveling singer',
+        funny: 'A wandering jukebox from the 1400s',
+      },
+      {
+        word: 'MUSICAL',
+        serious: 'Play with singing',
+        funny: 'A story where people burst into song for no reason',
+      },
+      {
+        word: 'OCTETTE',
+        serious: 'Group of eight',
+        funny: 'A musical "double quartet"',
+      },
+      {
+        word: 'OPERA',
+        serious: 'Staged musical drama',
+        funny: 'A play where everyone is stabbed but keeps singing',
+      },
+      {
+        word: 'ORCHESTRA',
+        serious: 'Large ensemble of players',
+        funny: 'A giant group led by a guy waving a stick',
+      },
+      {
+        word: 'PITCHES',
+        serious: 'Levels of sound',
+        funny: 'What a singer throws and a baseball player misses',
+      },
+      {
+        word: 'QUARTET',
+        serious: 'Group of four',
+        funny: 'A musical four-way street',
+      },
+      {
+        word: 'REHEARSE',
+        serious: 'Practice for a performance',
+        funny: 'Doing it again until the neighbors complain',
+      },
+      {
+        word: 'SOPRANO',
+        serious: 'Highest female voice',
+        funny: 'The singer who can shatter your wine glass',
+      },
+      {
+        word: 'STACCATO',
+        serious: 'Short, detached notes',
+        funny: 'Music played by a very caffeinated person',
+      },
+      {
+        word: 'SYMPHONY',
+        serious: 'Elaborate orchestral work',
+        funny: 'A very long piece of music with no commercial breaks',
+      },
+      {
+        word: 'UKULELE',
+        serious: 'Small Hawaiian guitar',
+        funny: 'A guitar that shrunk in the wash',
+      },
+      {
+        word: 'VIBRATO',
+        serious: 'Pulsating change of pitch',
+        funny: 'Musical shivering',
+      },
+      {
+        word: 'WOODWIND',
+        serious: 'Flutes, reeds, etc.',
+        funny: 'Instruments made of trees and hot air',
+      },
+
+      {
+        word: 'CODA',
+        serious: 'Final passage of a piece',
+        funny: 'The musical equivalent of "P.S. I\'m done now."',
+      },
+      {
+        word: 'PICCOLO',
+        serious: 'Tiny high-pitched flute',
+        funny: 'A musical toothpick that screams',
+      },
+      {
+        word: 'ETUDE',
+        serious: 'Musical study or exercise',
+        funny: 'A fancy word for "practice till your fingers hurt"',
+      },
+      {
+        word: 'MAESTRO',
+        serious: 'Distinguished conductor',
+        funny: 'The person with the best hair and the biggest stick',
+      },
+      {
+        word: 'ADAGIO',
+        serious: 'Slow musical tempo',
+        funny: 'Music moving at the speed of a snail in molasses',
+      },
+    ],
+    puzzles: [],
+  },
+
+  transportation: {
+    id: 'transportation',
+    name: 'Transportation',
+    wordBank: [
+      {
+        word: 'CAR',
+        serious: 'Automobile',
+        funny: 'Your personal metal shell for traffic jams',
+      },
+      {
+        word: 'OAR',
+        serious: 'Rowing implement',
+        funny: 'A wooden spoon for a lake',
+      },
+      {
+        word: 'OIL',
+        serious: 'Engine lubricant',
+        funny: 'The black juice that keeps the wheels turning',
+      },
+      {
+        word: 'RIG',
+        serious: 'Large semi-truck',
+        funny: 'A 18-wheeler that owns the highway',
+      },
+      {
+        word: 'SUB',
+        serious: 'Underwater vessel',
+        funny: 'A giant metal cigar that sinks on purpose',
+      },
+      {
+        word: 'TAX',
+        serious: 'Travel surcharge',
+        funny: 'The government’s ticket for your ticket',
+      },
+      {
+        word: 'TOW',
+        serious: 'Vehicle recovery',
+        funny: 'A "hook-up" you never want to have',
+      },
+      {
+        word: 'VAN',
+        serious: 'Boxy vehicle',
+        funny: 'A car that’s basically a small room on wheels',
+      },
+      {
+        word: 'SST',
+        serious: 'Supersonic transport',
+        funny: 'A plane that arrives before it leaves',
+      },
+      {
+        word: 'AUTO',
+        serious: 'Car, formally',
+        funny: 'A vehicle that does the driving (almost)',
+      },
+      {
+        word: 'AXLE',
+        serious: 'Wheel connector',
+        funny: 'The rod that keeps things spinning',
+      },
+      {
+        word: 'BIKE',
+        serious: 'Two-wheeled vehicle',
+        funny: 'A gym membership you can ride to work',
+      },
+      {
+        word: 'BOAT',
+        serious: 'Watercraft',
+        funny: 'A hole in the water you pour money into',
+      },
+      {
+        word: 'CART',
+        serious: 'Small horse-drawn vehicle',
+        funny: 'What you push at the grocery store',
+      },
+      {
+        word: 'DECK',
+        serious: 'Ship floor',
+        funny: "The part of the boat you shouldn't fall off",
+      },
+      {
+        word: 'FARE',
+        serious: 'Ticket price',
+        funny: 'The "entrance fee" for a bus ride',
+      },
+      {
+        word: 'FORD',
+        serious: 'Shallow river crossing',
+        funny: 'A way to cross water or a popular truck',
+      },
+      {
+        word: 'FUEL',
+        serious: 'Engine energy',
+        funny: 'The expensive liquid that goes "vroom"',
+      },
+      {
+        word: 'GEAR',
+        serious: 'Transmission part',
+        funny: 'The "teeth" of the machine',
+      },
+      {
+        word: 'HELM',
+        serious: 'Ship’s steering wheel',
+        funny: 'Where the captain pretends to be in charge',
+      },
+      {
+        word: 'HULL',
+        serious: 'Body of a ship',
+        funny: 'The part of the boat that touches the fish',
+      },
+      {
+        word: 'JEEP',
+        serious: 'Rugged 4x4',
+        funny: 'A car that thinks it’s a mountain goat',
+      },
+      {
+        word: 'KNOT',
+        serious: 'Nautical mile per hour',
+        funny: 'A measurement that’s always "tied" to the sea',
+      },
+      {
+        word: 'LANE',
+        serious: 'Road division',
+        funny: "The strip of asphalt your neighbor can't stay in",
+      },
+      {
+        word: 'RAFT',
+        serious: 'Simple floating platform',
+        funny: 'A boat for people who like to get wet',
+      },
+      {
+        word: 'RAIL',
+        serious: 'Train track',
+        funny: 'The steel path for a "choo-choo"',
+      },
+      {
+        word: 'ROAD',
+        serious: 'Paved path',
+        funny: 'The long gray ribbon under your tires',
+      },
+      {
+        word: 'SHIP',
+        serious: 'Large sea vessel',
+        funny: 'A boat that’s too big to be called a boat',
+      },
+      {
+        word: 'TAXI',
+        serious: 'Yellow cab, often',
+        funny: 'A car that’s always in a hurry',
+      },
+      {
+        word: 'TIRE',
+        serious: 'Rubber wheel part',
+        funny: 'The only part of the car that should be tired',
+      },
+      {
+        word: 'TRAM',
+        serious: 'Streetcar',
+        funny: 'A train that lives on the street',
+      },
+      {
+        word: 'TYRE',
+        serious: 'British wheel part',
+        funny: 'A wheel with an extra "y" for flavor',
+      },
+      {
+        word: 'BARGE',
+        serious: 'Flat-bottomed boat',
+        funny: 'A boat that’s not known for its speed',
+      },
+      {
+        word: 'BRAKE',
+        serious: 'Stopping mechanism',
+        funny: 'The "oops-preventer"',
+      },
+      {
+        word: 'CANOE',
+        serious: 'Narrow paddled boat',
+        funny: 'A tippy wooden banana',
+      },
+      {
+        word: 'COACH',
+        serious: 'Long-distance bus',
+        funny: 'A bus that thinks it’s fancy',
+      },
+      {
+        word: 'DEPOT',
+        serious: 'Transport station',
+        funny: 'The "home base" for trains and buses',
+      },
+      {
+        word: 'DRIVE',
+        serious: 'Operate a vehicle',
+        funny: 'What you do on a parkway (ironically)',
+      },
+      {
+        word: 'FERRY',
+        serious: 'Water shuttle',
+        funny: 'A bus that knows how to swim',
+      },
+      {
+        word: 'FLIGHT',
+        serious: 'Aerial journey',
+        funny: 'A trip where you pay for tiny bags of peanuts',
+      },
+      {
+        word: 'GLIDE',
+        serious: 'Move without power',
+        funny: 'Traveling like a paper airplane',
+      },
+      {
+        word: 'HOOKS',
+        serious: 'Towing equipment',
+        funny: 'The "claws" of the tow truck',
+      },
+      {
+        word: 'ELEVATOR',
+        serious: 'Vertical transport in buildings',
+        funny: 'A tiny room that judges you in silence',
+      },
+      {
+        word: 'FORKLIFT',
+        serious: 'Warehouse lifting vehicle',
+        funny: 'A tiny truck that thinks it’s a strongman',
+      },
+      {
+        word: 'METRO',
+        serious: 'Subway system',
+        funny: 'An underground city for commuters',
+      },
+      { word: 'MOTOR', serious: 'Engine', funny: 'The heart of the machine' },
+      {
+        word: 'PEDAL',
+        serious: 'Foot lever',
+        funny: 'The part of the bike you hate on uphill climbs',
+      },
+      {
+        word: 'PILOT',
+        serious: 'Aircraft operator',
+        funny: 'The person who talks to you from the clouds',
+      },
+      {
+        word: 'PLANE',
+        serious: 'Fixed-wing aircraft',
+        funny: 'A bus with wings and better views',
+      },
+      {
+        word: 'RADAR',
+        serious: 'Detection system',
+        funny: 'The "eye" that catches you speeding',
+      },
+      {
+        word: 'SEDAN',
+        serious: 'Four-door car',
+        funny: 'The "accountant" of the car world',
+      },
+      {
+        word: 'SKATE',
+        serious: 'Wheeled footwear',
+        funny: 'Transportation for people who like to fall',
+      },
+      {
+        word: 'SLOOP',
+        serious: 'Type of sailboat',
+        funny: 'A boat that sounds like a soup',
+      },
+      {
+        word: 'STEER',
+        serious: 'Direct a vehicle',
+        funny: 'What you do with a wheel or a bull',
+      },
+      {
+        word: 'TRAIN',
+        serious: 'Linked rail cars',
+        funny: 'A very long metal snake on tracks',
+      },
+      {
+        word: 'TRUCK',
+        serious: 'Hauling vehicle',
+        funny: 'A car with a giant backpack',
+      },
+      {
+        word: 'WHEEL',
+        serious: 'Circular transport part',
+        funny: 'The greatest invention since sliced bread',
+      },
+      {
+        word: 'YACHT',
+        serious: 'Luxury boat',
+        funny: 'A floating palace for people with too much cash',
+      },
+      {
+        word: 'TRIKE',
+        serious: 'Three-wheeled cycle',
+        funny: 'A bicycle for people with trust issues regarding gravity',
+      },
+      {
+        word: 'AIRBUS',
+        serious: 'Large jet manufacturer',
+        funny: 'A giant flying city bus',
+      },
+      {
+        word: 'AIRMEN',
+        serious: 'Flight personnel',
+        funny: 'People who spend their lives looking down',
+      },
+      {
+        word: 'CONVOY',
+        serious: 'Group of traveling vehicles',
+        funny: 'A "parade" of trucks on the highway',
+      },
+      {
+        word: 'CRUISE',
+        serious: 'Leisurely voyage',
+        funny: 'A floating buffet that occasionally docks',
+      },
+      {
+        word: 'ENGINE',
+        serious: 'Power plant',
+        funny: 'The noisy box under the hood',
+      },
+      {
+        word: 'FENDER',
+        serious: 'Wheel cover',
+        funny: 'The part that gets "bent" in a minor accident',
+      },
+      {
+        word: 'GARAGE',
+        serious: 'Vehicle shelter',
+        funny: 'A bedroom for your car',
+      },
+      {
+        word: 'GLIDER',
+        serious: 'Engineless plane',
+        funny: 'A plane that’s basically a giant kite',
+      },
+      {
+        word: 'HELIUM',
+        serious: 'Blimp filler',
+        funny: 'The gas that makes blimps float and voices squeak',
+      },
+      {
+        word: 'HYBRID',
+        serious: 'Dual-power vehicle',
+        funny: 'A car that can’t decide between gas and sparks',
+      },
+      {
+        word: 'LORRY',
+        serious: 'UK truck',
+        funny: 'What a Brit calls a "semi"',
+      },
+      {
+        word: 'PADDLE',
+        serious: 'Rowing tool',
+        funny: "What you're without when you're up a creek",
+      },
+      {
+        word: 'ROCKET',
+        serious: 'Space vehicle',
+        funny: 'A giant firework with a cockpit',
+      },
+      {
+        word: 'RUNWAY',
+        serious: 'Aircraft landing strip',
+        funny: 'A very long driveway for planes',
+      },
+      {
+        word: 'SCOOT',
+        serious: 'Move quickly',
+        funny: 'What you do on a tiny motor-deck',
+      },
+      {
+        word: 'SIGNAL',
+        serious: 'Traffic light',
+        funny: "The light that always turns red when you're late",
+      },
+      {
+        word: 'TANKER',
+        serious: 'Liquid-hauling ship',
+        funny: 'A floating gas station',
+      },
+      {
+        word: 'TICKET',
+        serious: 'Travel authorization',
+        funny: 'A piece of paper that costs a fortune',
+      },
+      {
+        word: 'VESSEL',
+        serious: 'Large ship',
+        funny: 'A fancy word for something that floats',
+      },
+      {
+        word: 'AIRLINE',
+        serious: 'Flight company',
+        funny: 'A business that specializes in losing luggage',
+      },
+      {
+        word: 'AIRSHIP',
+        serious: 'Dirigible or blimp',
+        funny: 'A giant floating football',
+      },
+      {
+        word: 'BICYCLE',
+        serious: 'Two-wheeled transport',
+        funny: 'A vehicle powered by sweat and gears',
+      },
+      {
+        word: 'CHOPPER',
+        serious: 'Helicopter',
+        funny: 'A fan that’s strong enough to lift people',
+      },
+      {
+        word: 'COMMUTE',
+        serious: 'Daily travel to work',
+        funny: 'The soul-crushing part of the morning',
+      },
+      {
+        word: 'FREEWAY',
+        serious: 'High-speed road',
+        funny: 'A road that is rarely "free" of traffic',
+      },
+      {
+        word: 'GONDOLA',
+        serious: 'Venetian boat',
+        funny: 'A floating sofa for romantic tourists',
+      },
+      {
+        word: 'HARBOR',
+        serious: 'Ship’s parking lot',
+        funny: 'A safe place for boats to hang out',
+      },
+      {
+        word: 'HIGHWAY',
+        serious: 'Main public road',
+        funny: 'A long stretch of asphalt and billboards',
+      },
+      {
+        word: 'PONTOON',
+        serious: 'Floating boat support',
+        funny: 'A boat that’s basically a floating patio',
+      },
+      {
+        word: 'PULLMAN',
+        serious: 'Luxury railroad car',
+        funny: 'A fancy hotel room on tracks',
+      },
+      {
+        word: 'SCHOONER',
+        serious: 'Large sailing vessel',
+        funny: 'A boat that sounds like it should be a beer',
+      },
+      {
+        word: 'STATION',
+        serious: 'Transport hub',
+        funny: 'The place where you wait... and wait...',
+      },
+      {
+        word: 'SUBWAY',
+        serious: 'Underground train',
+        funny: 'A giant metal tube full of strangers',
+      },
+      {
+        word: 'TRAILER',
+        serious: 'Towed vehicle',
+        funny: 'The "sidekick" of the truck',
+      },
+      {
+        word: 'TROLLEY',
+        serious: 'Streetcar or cart',
+        funny: 'A train that rings a bell',
+      },
+      {
+        word: 'UNICYCLE',
+        serious: 'One-wheeled vehicle',
+        funny: 'A bike for people with great balance and no fear',
+      },
+      {
+        word: 'CABOOSE',
+        serious: 'Last car on a train',
+        funny: 'The literal "rear end" of the railroad',
+      },
+      {
+        word: 'DIRIGIBLE',
+        serious: 'Lighter-than-air craft',
+        funny: 'A giant flying grape',
+      },
+      {
+        word: 'TRANSIT',
+        serious: 'Public travel system',
+        funny: "The thing you're in while looking at your watch",
+      },
+      {
+        word: 'BLIMP',
+        serious: 'Goodyear vehicle',
+        funny: 'A giant billboard in the sky',
+      },
+      {
+        word: 'KAYAK',
+        serious: 'Small closed canoe',
+        funny: 'A boat you wear like a pair of pants',
+      },
+    ],
+    puzzles: [],
+  },
+
+  eighties: {
+    id: 'eighties',
+    name: "The 80's",
+    wordBank: [
+      {
+        word: 'ALF',
+        serious: 'TV alien from Melmac',
+        funny: 'The puppet who wanted to eat the cat',
+      },
+      {
+        word: 'BIKES',
+        serious: 'Iconic mode of transport in E.T.',
+        funny: 'Proof that kids could outrun the government in the 80s',
+      },
+      {
+        word: 'PAC',
+        serious: 'Start of a dot-munching game',
+        funny: "The first three letters of a ghost-hunter's diet",
+      },
+      {
+        word: 'RAD',
+        serious: '80s slang for "excellent"',
+        funny: 'Short for "radical" and 100% tubular',
+      },
+      {
+        word: 'SRI',
+        serious: 'Part of "___ Lanka"',
+        funny: 'A tropical setting for a neon-clad music video',
+      },
+      {
+        word: 'MTV',
+        serious: 'Music video channel',
+        funny: 'Back when "M" actually stood for Music',
+      },
+      {
+        word: 'MAX',
+        serious: '80s digital host Headroom',
+        funny: 'A stuttering digital head in a suit',
+      },
+      {
+        word: 'DEVO',
+        serious: '"Whip It" band',
+        funny: 'The guys wearing red "energy domes" on their heads',
+      },
+      {
+        word: 'FAME',
+        serious: '1980 dance movie/show',
+        funny: '"I\'m gonna live forever," but the leg warmers didn\'t',
+      },
+      {
+        word: 'HAIR',
+        serious: 'Big 80s trend',
+        funny: 'What required three cans of Aqua Net per day',
+      },
+      {
+        word: 'ICON',
+        serious: 'Madonna or Prince',
+        funny: 'Someone whose poster was definitely on your wall',
+      },
+      {
+        word: 'INXS',
+        serious: '"Need You Tonight" band',
+        funny: 'A band name that sounds like a shopping spree',
+      },
+      {
+        word: 'JOAN',
+        serious: 'Rocker Jett',
+        funny: 'The lady who "Loves Rock \'n\' Roll"',
+      },
+      {
+        word: 'KONG',
+        serious: 'Donkey ___ (1981)',
+        funny: 'The giant ape who hated a plumber named Jumpman',
+      },
+      {
+        word: 'LISA',
+        serious: 'Cult hit "Weird Science" girl',
+        funny: 'The dream girl created by a floppy disk',
+      },
+      {
+        word: 'NEON',
+        serious: 'Bright 80s color palette',
+        funny: 'Colors that could be seen from outer space',
+      },
+      {
+        word: 'PONY',
+        serious: 'Ralph Lauren logo',
+        funny: 'The little horse on every "Preppy" polo shirt',
+      },
+      {
+        word: 'PUNK',
+        serious: 'Underground 80s subculture',
+        funny: 'Safety pins as jewelry and Mohawks as hats',
+      },
+      {
+        word: 'REO',
+        serious: '___ Speedwagon',
+        funny: 'The band that kept on loving you',
+      },
+      {
+        word: 'THOR',
+        serious: 'Adventures in Babysitting idol',
+        funny: 'The guy the kid thought the mechanic was',
+      },
+      {
+        word: 'TRON',
+        serious: '1982 Disney sci-fi film',
+        funny: 'A movie that took place inside a calculator',
+      },
+      {
+        word: 'ATARI',
+        serious: 'Early gaming console',
+        funny: 'The reason your parents’ TV had "burn-in"',
+      },
+      {
+        word: 'BLOND',
+        serious: 'Atomic ___ (Debbie Harry)',
+        funny: 'The hair color of a "Heart of Glass" singer',
+      },
+      {
+        word: 'BRATS',
+        serious: 'The "___ Pack"',
+        funny: 'A group of actors who spent a lot of time in detention',
+      },
+      {
+        word: 'CASIO',
+        serious: 'Digital watch brand',
+        funny: 'The calculator on your wrist that made you look "cool"',
+      },
+      {
+        word: 'DENIM',
+        serious: 'Acid-washed fabric',
+        funny: 'The material of choice for "Canadian Tuxedos"',
+      },
+      {
+        word: 'DURAN',
+        serious: '___ Duran',
+        funny: 'The band so nice they named it twice',
+      },
+      {
+        word: 'OZZY',
+        serious: 'The "Prince of Darkness"',
+        funny: 'The man who mistook a bat for a snack',
+      },
+      {
+        word: 'PERMS',
+        serious: 'Chemical hair curls',
+        funny: 'The reason the 80s smelled like sulfur',
+      },
+      {
+        word: 'PRINCE',
+        serious: '"Purple Rain" star',
+        funny: 'The artist who partied like it was 1999',
+      },
+      {
+        word: 'QUEEN',
+        serious: '"Live Aid" show-stealers',
+        funny: 'Freddy’s group that rocked Wembley',
+      },
+      {
+        word: 'SLICK',
+        serious: 'Grace ___ (Starship)',
+        funny: 'The singer who "Built This City" on Rock and Roll',
+      },
+      {
+        word: 'VADER',
+        serious: '"Empire Strikes Back" villain',
+        funny: 'The guy with the galaxy’s worst "Father of the Year" award',
+      },
+
+      {
+        word: 'WHAM',
+        serious: "George Michael's duo",
+        funny: 'The band that gave us "Wake Me Up Before You Go-Go"',
+      },
+      {
+        word: 'AHA',
+        serious: '"Take On Me" band',
+        funny: 'The band that turned into a comic book sketch',
+      },
+      {
+        word: 'ARCADE',
+        serious: 'Where 80s kids hung out',
+        funny: 'A dark room full of quarters and beeping noises',
+      },
+      {
+        word: 'BEASTS',
+        serious: '___ie Boys',
+        funny: 'The trio who fought for their "Right to Party"',
+      },
+      {
+        word: 'BOWIE',
+        serious: 'The "Labyrinth" Goblin King',
+        funny: 'A rock star with amazing leggings and even better hair',
+      },
+      {
+        word: 'CYNDI',
+        serious: 'Lauper of the 80s',
+        funny: 'The girl with the orange hair and the "Bop"',
+      },
+      {
+        word: 'FERRIS',
+        serious: '___ Bueller',
+        funny: 'The kid who proved one day off can be legendary',
+      },
+      {
+        word: 'GIBSON',
+        serious: 'Pop star Debbie',
+        funny: 'The girl who wore "Electric Youth" perfume',
+      },
+      {
+        word: 'GOONIES',
+        serious: '1985 adventure film',
+        funny: 'The kids who found a pirate ship in a cave',
+      },
+      {
+        word: 'HOGAN',
+        serious: '"Hulk" of the WWF',
+        funny: 'The man who asked, "Whatcha gonna do, brother?"',
+      },
+      {
+        word: 'PACMAN',
+        serious: 'Yellow arcade icon',
+        funny: 'A hungry circle who hates colorful ghosts',
+      },
+      {
+        word: 'POLO',
+        serious: 'Iconic 80s shirt',
+        funny: 'The official uniform of the "Preppy" handbook',
+      },
+      {
+        word: 'REAGAN',
+        serious: '40th US President',
+        funny: 'The "Great Communicator" and jelly bean fan',
+      },
+      {
+        word: 'ROBOCOP',
+        serious: '1987 cyborg lawman',
+        funny: 'Part man, part machine, all 80s action',
+      },
+      {
+        word: 'SMILEY',
+        serious: 'Acid house logo',
+        funny: 'The yellow face that was "All over" the 80s',
+      },
+      {
+        word: 'TOPGUN',
+        serious: '1986 Cruise movie',
+        funny: 'A movie-length commercial for Ray-Bans',
+      },
+      {
+        word: 'TEFLON',
+        serious: 'Nickname for Reagan',
+        funny: 'A non-stick pan or a very lucky politician',
+      },
+      {
+        word: 'AQUANET',
+        serious: 'Popular 80s hairspray',
+        funny: 'The primary reason for the hole in the ozone layer',
+      },
+      {
+        word: 'BETAMAX',
+        serious: 'Failed VCR format',
+        funny: 'The loser of the great 80s videotape war',
+      },
+      {
+        word: 'BREAKDANCE',
+        serious: 'Urban dance style',
+        funny: 'Spinning on your head until you get dizzy',
+      },
+      {
+        word: 'CASSETTE',
+        serious: 'Magnetic tape format',
+        funny: 'The thing you fixed with a yellow pencil',
+      },
+      {
+        word: 'DYNASTY',
+        serious: '80s prime-time soap',
+        funny: 'A show featuring shoulder pads and fountain fights',
+      },
+      {
+        word: 'FRAGGLE',
+        serious: '___ Rock (Jim Henson)',
+        funny: 'The creatures who lived down at the "Rock"',
+      },
+      {
+        word: 'GENESIS',
+        serious: "Phil Collins' band",
+        funny: 'A band that was an "Invisible Touch" away from a hit',
+      },
+      {
+        word: 'GREMLINS',
+        serious: '1984 creature feature',
+        funny: "Don't feed them after midnight!",
+      },
+      {
+        word: 'LEGWARM',
+        serious: 'Clothing for aerobics',
+        funny: 'Sweaters for your shins',
+      },
+      {
+        word: 'MADONNA',
+        serious: 'The "Material Girl"',
+        funny: 'The woman who wore her underwear on the outside',
+      },
+      {
+        word: 'NINTENDO',
+        serious: 'NES maker',
+        funny: 'The "box" you had to blow into to make it work',
+      },
+      {
+        word: 'OUTATIME',
+        serious: 'DeLorean license plate',
+        funny: 'What Marty McFly was, literally',
+      },
+      {
+        word: 'RUBIKS',
+        serious: '___ Cube',
+        funny: 'The 3x3 puzzle that frustrated an entire generation',
+      },
+      {
+        word: 'WALKMAN',
+        serious: 'Portable Sony player',
+        funny: 'The device that let you ignore people in 1983',
+      },
+
+      {
+        word: 'GHOSTBUSTERS',
+        serious: '1984 comedy hit',
+        funny: "Who you're gonna call?",
+      },
+      {
+        word: 'JOSHUA',
+        serious: '"The ___ Tree" (U2)',
+        funny: 'A desert tree or a 1987 mega-album',
+      },
+      {
+        word: 'TEARS',
+        serious: '"___ for Fears"',
+        funny: 'The band that wanted to rule the world',
+      },
+      {
+        word: 'SPIELBERG',
+        serious: 'Director Steven',
+        funny: 'The man who gave us ET and Indy',
+      },
+      {
+        word: 'VOLTRON',
+        serious: 'Robot lion cartoon',
+        funny: 'Five lions that make one giant knight',
+      },
+      {
+        word: 'HEMAN',
+        serious: 'Master of the Universe',
+        funny: 'The guy with the sword and the blonde bob',
+      },
+      {
+        word: 'FRIDAY',
+        serious: '___ the 13th',
+        funny: 'Jason’s favorite day of the week',
+      },
+      {
+        word: 'BONJOVI',
+        serious: '"Livin\' on a Prayer" band',
+        funny: 'The group that gave love a bad name',
+      },
+      {
+        word: 'BEETLE',
+        serious: '"___-juice"',
+        funny: "Don't say his name three times!",
+      },
+      {
+        word: 'RAMBO',
+        serious: 'Stallone action hero',
+        funny: 'A guy who really likes headbands and bows',
+      },
+      {
+        word: 'POLTERGEIST',
+        serious: '"___-geist"',
+        funny: "They're hee-ere!",
+      },
+      {
+        word: 'COKE',
+        serious: 'New ___ (1985 flop)',
+        funny: 'The biggest drink disaster of the decade',
+      },
+      {
+        word: 'SMURFS',
+        serious: 'Blue forest dwellers',
+        funny: 'Tiny blue people led by a guy in a red hat',
+      },
+      {
+        word: 'CHER',
+        serious: '"If I Could Turn Back Time"',
+        funny: 'The singer who shot a video on a battleship',
+      },
+      {
+        word: 'STING',
+        serious: 'Police frontman',
+        funny: "The man who's watching every breath you take",
+      },
+      {
+        word: 'TINA',
+        serious: '"Private Dancer" Turner',
+        funny: 'The queen of rock with the big hair and legs',
+      },
+      {
+        word: 'JOURNEY',
+        serious: '"Don\'t Stop Believin\'" band',
+        funny: "The band you'll hear in every karaoke bar forever",
+      },
+      {
+        word: 'BIG',
+        serious: '1988 Tom Hanks movie',
+        funny: 'The movie where a kid wishes to be an adult',
+      },
+      {
+        word: 'PHOENIX',
+        serious: 'River of the 80s',
+        funny: 'A "Stand By Me" star',
+      },
+      {
+        word: 'DUCKIE',
+        serious: '"Pretty in Pink" sidekick',
+        funny: 'The guy who was tragically "friend-zoned"',
+      },
+      {
+        word: 'MULLEN',
+        serious: 'Larry of U2',
+        funny: 'The drummer of the biggest 80s Irish band',
+      },
+      {
+        word: 'SIMPSONS',
+        serious: '1989 debut family',
+        funny: 'The yellow family that started as Tracy Ullman shorts',
+      },
+
+      {
+        word: 'BIZARRE',
+        serious: '"___ Love Triangle"',
+        funny: 'A 1986 New Order dance floor classic',
+      },
+      {
+        word: 'PSYCHO',
+        serious: '"___ Killer" (Talking Heads)',
+        funny: "Qu'est-ce que c'est?",
+      },
+      {
+        word: 'VOX',
+        serious: '80s synth brand',
+        funny: 'A voice or a vintage amplifier',
+      },
+      {
+        word: 'KEYTAR',
+        serious: 'Shoulder-worn synth',
+        funny: 'For the keyboardist who wants to be a guitarist',
+      },
+      {
+        word: 'SCRUNCHI',
+        serious: '80s hair tie',
+        funny: 'A fabric donut for your ponytail',
+      },
+      {
+        word: 'MULLET',
+        serious: '80s hairstyle',
+        funny: 'Business in the front, party in the back',
+      },
+      {
+        word: 'SLOGAN',
+        serious: '"Where\'s the beef?"',
+        funny: 'A catchy phrase from an 80s ad',
+      },
+      {
+        word: 'GNARLY',
+        serious: '80s surfer slang',
+        funny: "Something that's either very cool or very gross",
+      },
+      {
+        word: 'TUBULAR',
+        serious: '80s radical slang',
+        funny: 'A word for a pipe or something awesome',
+      },
+      {
+        word: 'BODACIOUS',
+        serious: '80s "excellent" slang',
+        funny: 'Something very impressive or bold',
+      },
+      {
+        word: 'PREPPY',
+        serious: '80s style',
+        funny: 'Polos, loafers, and popped collars',
+      },
+      {
+        word: 'MALL',
+        serious: '80s hangout',
+        funny: 'The place where you bought tapes and hung out',
+      },
+      {
+        word: 'VHS',
+        serious: 'Video tape format',
+        funny: 'The winner of the war against Betamax',
+      },
+      {
+        word: 'BOOMBOX',
+        serious: 'Large portable radio',
+        funny: 'A stereo you carry on your shoulder',
+      },
+    ],
+    puzzles: [],
+  },
+
+  nineties: {
+    id: 'nineties',
+    name: "The 90's",
+    wordBank: [
+      {
+        word: 'AOL',
+        serious: 'Early internet giant',
+        funny: 'The sound of "Goodbye" and "You\'ve Got Mail"',
+      },
+      {
+        word: 'DOT',
+        serious: 'Part of ".com"',
+        funny: 'The tiny speck that started a billion-dollar bubble',
+      },
+      {
+        word: 'FAX',
+        serious: 'Common 90s office tech',
+        funny: 'How we sent "PDFs" before email was cool',
+      },
+      {
+        word: 'ICE',
+        serious: 'Rapper Van Winkle',
+        funny: 'The guy who told us to "Stop, collaborate and listen"',
+      },
+      {
+        word: 'MAC',
+        serious: 'Colorful 90s Apple computer',
+        funny: 'The "i" maker that started with translucent cases',
+      },
+      {
+        word: 'POG',
+        serious: '90s cardboard disc game',
+        funny: 'A game involving a "slammer" and zero skill',
+      },
+      {
+        word: 'REM',
+        serious: '"Losing My Religion" band',
+        funny: 'The band that found their religion in the 90s',
+      },
+      {
+        word: 'CHAD',
+        serious: 'Disputed 2000 ballot piece',
+        funny: 'The "hanging" villain of the decade\'s end',
+      },
+      {
+        word: 'ELMO',
+        serious: '1996\'s "Tickle Me" toy',
+        funny: 'The red monster that caused parent riots at malls',
+      },
+      {
+        word: 'GENX',
+        serious: 'The 90s youth generation',
+        funny: 'The group that perfected the sarcastic "Whatever"',
+      },
+      {
+        word: 'JAVA',
+        serious: 'Sun Microsystems tech',
+        funny: 'Computer code or the fuel for 90s coffee shops',
+      },
+      {
+        word: 'ROSS',
+        serious: '"Friends" paleontologist',
+        funny: 'The guy who was "ON A BREAK!"',
+      },
+      {
+        word: 'SEGA',
+        serious: 'Genesis maker',
+        funny: 'The company that screamed its own name at the start',
+      },
+      {
+        word: 'SURF',
+        serious: 'To browse the Web',
+        funny: 'Something you did on a board or a dial-up modem',
+      },
+      {
+        word: 'YADA',
+        serious: '"___, ___, ___" (Seinfeld)',
+        funny: 'The 90s way of skipping the boring parts',
+      },
+      {
+        word: 'AKIRA',
+        serious: '1990s anime hit',
+        funny: 'The movie that made kids think cartoons were scary',
+      },
+      {
+        word: 'BJORK',
+        serious: 'Icelandic singer',
+        funny: 'The woman who wore a swan to the Oscars',
+      },
+      {
+        word: 'DRE',
+        serious: 'Dr. ___ ("The Chronic")',
+        funny: 'The rapper who "Forgot" himself (per Eminem)',
+      },
+      {
+        word: 'FURBY',
+        serious: 'Robotic 1998 toy',
+        funny: 'A fuzzy owl that talked in the middle of the night',
+      },
+      {
+        word: 'HOMER',
+        serious: 'Simpson patriarch',
+        funny: 'The man who made "D\'oh!" a dictionary word',
+      },
+      {
+        word: 'JERRY',
+        serious: 'Talk show host Springer',
+        funny: 'The guy whose guests were always throwing chairs',
+      },
+      {
+        word: 'LOPEZ',
+        serious: 'Jennifer ("Jenny from the...")',
+        funny: 'The star who made "The Block" famous',
+      },
+      {
+        word: 'MODEM',
+        serious: 'Internet connector',
+        funny: 'The box that made screaming noises to call the web',
+      },
+      {
+        word: 'PAGER',
+        serious: 'Pre-cell phone device',
+        funny: 'The beeper that made you look like a 90s doctor',
+      },
+      {
+        word: 'URKEL',
+        serious: '"Family Matters" nerd',
+        funny: 'The guy who asked, "Did I do that?"',
+      },
+      {
+        word: 'BARNEY',
+        serious: 'Purple TV dinosaur',
+        funny: 'The creature who loved you, even if you hated him',
+      },
+      {
+        word: 'COBAIN',
+        serious: 'Nirvana frontman',
+        funny: 'The man who made messy hair and cardigans iconic',
+      },
+      {
+        word: 'DIANA',
+        serious: 'Princess of Wales',
+        funny: 'The "Candle in the Wind"',
+      },
+      {
+        word: 'DIESEL',
+        serious: 'Ripped jeans brand',
+        funny: 'The pants that cost more because they had holes',
+      },
+      {
+        word: 'FLANNEL',
+        serious: 'Grunge fashion staple',
+        funny: 'The official uniform of Seattle in 1992',
+      },
+      {
+        word: 'JORDAN',
+        serious: 'Bulls legend Michael',
+        funny: 'The man who flew through the air in "Space Jam"',
+      },
+      {
+        word: 'NAPSTER',
+        serious: 'Music sharing site',
+        funny: 'The site that made Lars Ulrich very, very angry',
+      },
+      {
+        word: 'POTTER',
+        serious: 'Book boy Harry (1997)',
+        funny: 'The wizard who lived under the stairs',
+      },
+      {
+        word: 'CLUELESS',
+        serious: '1995 Alicia Silverstone film',
+        funny: '"As if!" (The movie)',
+      },
+      {
+        word: 'DIALUP',
+        serious: 'Slow internet connection',
+        funny: 'The noise of a robot choking on a phone line',
+      },
+      {
+        word: 'DISCMAN',
+        serious: 'Portable CD player',
+        funny: 'The device that skipped if you breathed too hard',
+      },
+      {
+        word: 'FORREST',
+        serious: 'Gump of 1994',
+        funny: 'The man who thought life was like a box of chocolates',
+      },
+      {
+        word: 'GAMEBOY',
+        serious: 'Nintendo handheld',
+        funny: 'The gray brick that ate AA batteries for breakfast',
+      },
+      {
+        word: 'SEINFELD',
+        serious: '"Show about nothing"',
+        funny: 'The reason we all know what "The Soup Nazi" is',
+      },
+      {
+        word: 'TITANIC',
+        serious: '1997 blockbuster',
+        funny: 'The movie that proved there was room for Jack',
+      },
+      {
+        word: 'TOYSTORY',
+        serious: '1995 Pixar debut',
+        funny: 'The movie that made you feel guilty for discarding Lego',
+      },
+      {
+        word: 'XFILES',
+        serious: 'Paranormal TV show',
+        funny: 'The reason people started looking for "The Truth"',
+      },
+
+      {
+        word: 'SKA',
+        serious: 'Horn-heavy 90s genre',
+        funny: 'Music for people who love checkers and jumping',
+      },
+      {
+        word: 'TLC',
+        serious: '"Waterfalls" R&B trio',
+        funny: 'A group that strictly forbids chasing waterfalls',
+      },
+      {
+        word: 'SLAM',
+        serious: '___ dunk or ___ poetry',
+        funny: 'A high-flying move or a 90s coffee house event',
+      },
+      {
+        word: 'RACHEL',
+        serious: 'Iconic 90s haircut',
+        funny: 'The hairstyle that every woman took to the salon',
+      },
+      {
+        word: 'GARTH',
+        serious: 'Brooks or "Wayne\'s World" pal',
+        funny: 'A country king or a guy with "excellent" glasses',
+      },
+      {
+        word: 'BUFFY',
+        serious: 'The Vampire Slayer',
+        funny: 'The blonde teen who spent her nights in cemeteries',
+      },
+      {
+        word: 'SMASH',
+        serious: '"___ Mouth"',
+        funny: 'The band that told us "All that glitters is gold"',
+      },
+      {
+        word: 'NODOUBT',
+        serious: "Gwen Stefani's band",
+        funny: 'The group that told us "Don\'t Speak"',
+      },
+      {
+        word: 'CRANBERRY',
+        serious: 'Band behind "Zombie"',
+        funny: 'The group that made sadness sound beautiful',
+      },
+      {
+        word: 'GOOSEBUMPS',
+        serious: 'R.L. Stine book series',
+        funny: 'Stories that gave 90s kids a "fright"',
+      },
+      {
+        word: 'BEAVIS',
+        serious: "Butt-head's pal",
+        funny: 'The guy who really wanted "TP for his bunghole"',
+      },
+      {
+        word: 'JUMANJI',
+        serious: '1995 board game movie',
+        funny: "The game you shouldn't play in the jungle",
+      },
+      {
+        word: 'COOLIO',
+        serious: '"Gangsta\'s Paradise" rapper',
+        funny: 'The man with the most gravity-defying hair',
+      },
+      {
+        word: 'WILLS',
+        serious: 'Prince of the 90s',
+        funny: 'The elder son of Charles and Diana',
+      },
+      {
+        word: 'ENYCE',
+        serious: '90s streetwear',
+        funny: 'The label on your oversized hoodie',
+      },
+      {
+        word: 'SNES',
+        serious: '16-bit Nintendo',
+        funny: 'The console that gave us Super Mario World',
+      },
+      {
+        word: 'LUGE',
+        serious: '90s Winter Olympic sport',
+        funny: 'Going down a frozen pipe on a cafeteria tray',
+      },
+      {
+        word: 'NOEL',
+        serious: 'A Gallagher brother',
+        funny: "The Oasis member who wasn't Liam",
+      },
+      {
+        word: 'ALANIS',
+        serious: 'Morissette of 1995',
+        funny: 'The singer who found a black fly in her Chardonnay',
+      },
+      {
+        word: 'MORPH',
+        serious: '"Mighty ___" Rangers',
+        funny: 'What the Power Rangers did before a fight',
+      },
+      {
+        word: 'GNOME',
+        serious: 'Desktop environment (1997)',
+        funny: 'A garden ornament or a 90s tech interface',
+      },
+      {
+        word: 'KELSEY',
+        serious: '"___ Grammer"',
+        funny: 'The man who played Frasier Crane',
+      },
+      {
+        word: 'ZIMA',
+        serious: 'Clear 90s malt beverage',
+        funny: 'The drink that tasted like lemon-lime static',
+      },
+      {
+        word: 'SPICE',
+        serious: '"___ Girls"',
+        funny: 'The group that brought us "Girl Power"',
+      },
+      {
+        word: 'JAMIRO',
+        serious: '"___-quai"',
+        funny: 'The guy in the giant hat dancing on moving floors',
+      },
+      {
+        word: 'DOLCE',
+        serious: '"___ & Gabbana"',
+        funny: 'High fashion with extra sunglasses energy',
+      },
+      {
+        word: 'KORN',
+        serious: 'Nu-metal pioneers',
+        funny: 'The band that put bagpipes in heavy metal',
+      },
+
+      {
+        word: 'BECK',
+        serious: '"Loser" singer',
+        funny: 'The artist who had "two turntables and a microphone"',
+      },
+      {
+        word: 'HOOTIE',
+        serious: 'And the Blowfish',
+        funny: 'The band that just wanted to be with you',
+      },
+      {
+        word: 'SHANIA',
+        serious: 'Twain of the 90s',
+        funny: "The woman who wasn't impressed by your car",
+      },
+      {
+        word: 'ENYA',
+        serious: '"Orinoco Flow" singer',
+        funny: 'The queen of 90s waiting room music',
+      },
+      {
+        word: 'REDS',
+        serious: '"___ Hot Chili Peppers"',
+        funny: 'The band that gave it away (now!)',
+      },
+      {
+        word: 'BLUR',
+        serious: '"Song 2" band',
+        funny: 'The Britpop group that went "Woo-hoo!"',
+      },
+      {
+        word: 'OASIS',
+        serious: '"Wonderwall" band',
+        funny: 'The brothers who fought more than they sang',
+      },
+      {
+        word: 'BUSH',
+        serious: '"Glycerine" band',
+        funny: 'The British band that sounded like they were from Seattle',
+      },
+      {
+        word: 'GARBAGE',
+        serious: "Shirley Manson's band",
+        funny: 'The group that was "only happy when it rains"',
+      },
+      {
+        word: 'SUBLIME',
+        serious: '"Santeria" band',
+        funny: "The band that didn't practice Santeria",
+      },
+      {
+        word: 'PHISH',
+        serious: '90s jam band',
+        funny: 'The group with the most dedicated "phans"',
+      },
+      {
+        word: 'CREED',
+        serious: '"Higher" band',
+        funny: 'The band that sang with arms wide open',
+      },
+      {
+        word: 'JEWEL',
+        serious: '"You Were Meant for Me"',
+        funny: 'The singer who lived in her van before fame',
+      },
+      {
+        word: 'USHER',
+        serious: '90s R&B star',
+        funny: 'The man who made "U Remind Me" a hit',
+      },
+      {
+        word: 'BRANDY',
+        serious: '"The Boy Is Mine" singer',
+        funny: 'The singer who was also "Moesha"',
+      },
+      {
+        word: 'MONICA',
+        serious: '90s singer or Friend',
+        funny: 'A pop star or the lady with the yellow door',
+      },
+      {
+        word: 'AALIYAH',
+        serious: '"Back & Forth" singer',
+        funny: 'The "Princess of R&B"',
+      },
+      {
+        word: 'SELENA',
+        serious: 'Queen of Tejano',
+        funny: 'The star played by J-Lo in 1997',
+      },
+      {
+        word: 'TUPAC',
+        serious: '2Pac',
+        funny: 'The rapper with "Dear Mama" and "California Love"',
+      },
+      {
+        word: 'BIGGIE',
+        serious: 'Notorious B.I.G.',
+        funny: 'The "Poppa" of East Coast rap',
+      },
+      {
+        word: 'JAYZ',
+        serious: '"Reasonable Doubt" rapper',
+        funny: 'The man who had "99 Problems" later on',
+      },
+      {
+        word: 'NAS',
+        serious: '"Illmatic" rapper',
+        funny: 'The man who said "The World Is Yours"',
+      },
+
+      {
+        word: 'FOOS',
+        serious: '"___ Fighters"',
+        funny: "Dave Grohl's post-Nirvana project",
+      },
+      {
+        word: 'WEEZER',
+        serious: '"Buddy Holly" band',
+        funny: 'The group that looked like four guys at a chess club',
+      },
+      {
+        word: 'GREEN',
+        serious: '"___ Day"',
+        funny: 'The band that gave us the "Dookie" album',
+      },
+      {
+        word: 'PANTERA',
+        serious: '"___-a"',
+        funny: 'The "Cowboys from Hell" metal band',
+      },
+      {
+        word: 'RAGE',
+        serious: '"___ Against the Machine"',
+        funny: 'The band that did what they told ya',
+      },
+      {
+        word: 'SUAVE',
+        serious: '"Rico ___"',
+        funny: 'The 90s one-hit wonder with the abs',
+      },
+      {
+        word: 'HANSON',
+        serious: '"MMMBop" brothers',
+        funny: 'The trio that looked like girls but were brothers',
+      },
+      {
+        word: 'MACARENA',
+        serious: '90s dance craze',
+        funny: 'The dance that involves touching your head and hips',
+      },
+      {
+        word: 'GOOGOO',
+        serious: '"___ Dolls"',
+        funny: 'The band that sang "Iris" on every radio station',
+      },
+    ],
+    puzzles: [],
+  },
+
+  worldevents: {
+    id: 'worldevents',
+    name: 'World Events',
+    wordBank: [
+      {
+        word: 'APP',
+        serious: 'Software for a smartphone',
+        funny: "The reason you can't put your phone down",
+      },
+      {
+        word: 'GSEVEN',
+        serious: 'Group of world leaders',
+        funny: 'A summit that sounds like a chess move',
+      },
+
+      {
+        word: 'GPS',
+        serious: 'Satellite navigation system',
+        funny: 'The voice that tells you "Recalculating"',
+      },
+      {
+        word: 'IRAQ',
+        serious: '2003 invasion country',
+        funny: 'Not your retirement account, the other four-letter one',
+      },
+      {
+        word: 'RIO',
+        serious: '2016 Olympics host city',
+        funny: 'The city that threw a party for the whole world',
+      },
+      {
+        word: 'TSN',
+        serious: 'Network for 21st c. sports',
+        funny: 'Three letters for sports fans',
+      },
+      {
+        word: 'ARAB',
+        serious: 'The "___ Spring"',
+        funny: 'A 2011 season of political change',
+      },
+      {
+        word: 'CERN',
+        serious: 'Large Hadron Collider site',
+        funny: 'The place where they play bumper cars with atoms',
+      },
+      {
+        word: 'EURO',
+        serious: 'Currency launched in 2002',
+        funny: 'The money that made 20 countries share a wallet',
+      },
+      {
+        word: 'GORE',
+        serious: '2000 election candidate',
+        funny: 'The guy who "invented the internet" and lost',
+      },
+      {
+        word: 'IPAD',
+        serious: '2010 Apple tablet debut',
+        funny: 'An iPhone that ate a "Grow" mushroom',
+      },
+      {
+        word: 'IRAN',
+        serious: 'Target of 2015 nuclear deal',
+        funny: "A country that's always in the news scroll",
+      },
+      {
+        word: 'ISIS',
+        serious: 'Militant group formed in 2000s',
+        funny: 'An Egyptian goddess or a security threat',
+      },
+      {
+        word: 'MARS',
+        serious: 'Target of the "Curiosity" rover',
+        funny: 'The "Red Planet" we\'re trying to move to',
+      },
+      {
+        word: 'MASK',
+        serious: 'Global 2020 fashion trend',
+        funny: 'The cloth that hid our smiles for two years',
+      },
+      {
+        word: 'MUSK',
+        serious: 'SpaceX founder Elon',
+        funny: 'The man who wants to retire on another planet',
+      },
+      {
+        word: 'NATO',
+        serious: 'Alliance expanded in 2004',
+        funny: 'The group that grew after the Cold War',
+      },
+      {
+        word: 'OSLO',
+        serious: 'Nobel Peace Prize city',
+        funny: 'Where the world\'s most peaceful "Gold Medal" is',
+      },
+      {
+        word: 'WIKI',
+        serious: 'Prefix for 21st c. "Leaks"',
+        funny: 'The "fast" way to get information (and secrets)',
+      },
+      {
+        word: 'CLOUD',
+        serious: 'Online storage era',
+        funny: 'Where your photos go to live forever',
+      },
+      {
+        word: 'CRASH',
+        serious: '2008 financial crisis',
+        funny: 'What the housing market did in its sleep',
+      },
+      {
+        word: 'DEBT',
+        serious: 'Global "___ Crisis"',
+        funny: 'The trillions of dollars the world owes itself',
+      },
+      {
+        word: 'DRONE',
+        serious: 'Unmanned aerial vehicle',
+        funny: 'A flying camera that annoys neighbors',
+      },
+      {
+        word: 'EBOLA',
+        serious: '2014 West African outbreak',
+        funny: 'A virus that made everyone reach for sanitizer',
+      },
+      {
+        word: 'GREEK',
+        serious: '2010s "___ Debt Crisis"',
+        funny: 'A tragedy that started in Athens, not a theater',
+      },
+      {
+        word: 'HAITI',
+        serious: 'Site of massive 2010 quake',
+        funny: 'A Caribbean nation that needs a break',
+      },
+      {
+        word: 'KOREA',
+        serious: '2018 "Peace Summit" site',
+        funny: 'The peninsula with a very famous "DMZ"',
+      },
+      {
+        word: 'OBAMA',
+        serious: '44th US President',
+        funny: 'The man whose slogan was "Yes We Can"',
+      },
+      {
+        word: 'PUTIN',
+        serious: 'Longtime Russian leader',
+        funny: 'The man who loves shirtless horseback riding',
+      },
+      {
+        word: 'QUAKE',
+        serious: '2011 Japan disaster',
+        funny: "Nature's way of shaking things up",
+      },
+      {
+        word: 'SYRIA',
+        serious: 'Site of ongoing 2011 conflict',
+        funny: 'A Middle Eastern nation in the headlines',
+      },
+      {
+        word: 'TWEET',
+        serious: 'Post on "X" (formerly Twitter)',
+        funny: 'A 140-character way to start an argument',
+      },
+      {
+        word: 'VIRUS',
+        serious: '2020 global disruption',
+        funny: 'The tiny spike-ball that canceled the world',
+      },
+      {
+        word: 'TEAMS',
+        serious: 'Remote meeting platform',
+        funny: 'Where meetings go to multiply like gremlins',
+      },
+      {
+        word: 'WIFI',
+        serious: 'Wireless networking tech',
+        funny: 'The invisible magic that makes us panic',
+      },
+
+      {
+        word: 'AFGHAN',
+        serious: 'Site of 20-year US war',
+        funny: 'A warm blanket or a very long conflict',
+      },
+      {
+        word: 'BREXIT',
+        serious: 'British exit from the EU',
+        funny: 'A 4-year goodbye that felt like a lifetime',
+      },
+      {
+        word: 'CENSUS',
+        serious: 'Decennial population count',
+        funny: 'The government\'s way of asking "Who\'s home?"',
+      },
+      {
+        word: 'EMAILS',
+        serious: 'Subject of 2016 controversy',
+        funny: 'The version of "The dog ate my homework"',
+      },
+      {
+        word: 'FRENCH',
+        serious: '2015 Paris Accord nation',
+        funny: 'People who take climate goals with a croissant',
+      },
+      {
+        word: 'GIZMOS',
+        serious: '21st c. tech gadgets',
+        funny: 'The many "i-Things" filling our junk drawers',
+      },
+      {
+        word: 'LONDON',
+        serious: '2012 Summer Olympics host',
+        funny: 'The city that brought Mary Poppins to the track',
+      },
+      {
+        word: 'MERKEL',
+        serious: 'Longtime German Chancellor',
+        funny: 'The "Iron Lady" of the European Union',
+      },
+      {
+        word: 'TIKTOK',
+        serious: 'Video social giant',
+        funny: 'The app that turned everyone into a dancer',
+      },
+      {
+        word: 'SPACEX',
+        serious: '2002 Musk venture',
+        funny: 'A private taxi service for astronauts',
+      },
+      {
+        word: 'TRUMP',
+        serious: '45th US President',
+        funny: 'A TV host who moved into the White House',
+      },
+
+      {
+        word: 'AIRBNB',
+        serious: '2008 home-sharing debut',
+        funny: "Paying to sleep in a stranger's spare bedroom",
+      },
+      {
+        word: 'FACEBOOK',
+        serious: 'Social media giant (2004)',
+        funny: 'A place to see what high school rivals had for lunch',
+      },
+      {
+        word: 'FUKUSHIMA',
+        serious: '2011 nuclear site',
+        funny: 'The city that gave "glowing reviews" a bad name',
+      },
+      {
+        word: 'HURRICANE',
+        serious: 'Katrina (2005) or Sandy (2012)',
+        funny: 'A very windy guest that overstays its welcome',
+      },
+      {
+        word: 'NETFLIX',
+        serious: 'Streaming giant (2007)',
+        funny: "The reason you haven't seen the sun in days",
+      },
+      {
+        word: 'OUTBREAK',
+        serious: 'SARS (2003) or COVID (2019)',
+        funny: 'A very bad "viral" moment',
+      },
+      {
+        word: 'SAMSUNG',
+        serious: "Apple's 21st c. rival",
+        funny: 'The other phone that isn\'t a "fruit"',
+      },
+      {
+        word: 'SNAPCHAT',
+        serious: '2011 disappearing photo app',
+        funny: 'Evidence that deletes itself in ten seconds',
+      },
+      {
+        word: 'STIMULUS',
+        serious: '2009/2020 economic aid',
+        funny: 'The government "making it rain" to save banks',
+      },
+      {
+        word: 'THUNBERG',
+        serious: 'Climate activist Greta',
+        funny: 'The teen who made world leaders feel guilty',
+      },
+      {
+        word: 'TSUNAMI',
+        serious: '2004 Indian Ocean event',
+        funny: 'A wave that really knows how to enter',
+      },
+      {
+        word: 'YOUTUBE',
+        serious: '2005 video sharing site',
+        funny: 'The place where "cat videos" became a career',
+      },
+
+      {
+        word: 'ELLIOT',
+        serious: 'Boy who befriended an alien in 1982',
+        funny: 'The kid who proved bikes can fly',
+      },
+
+      {
+        word: 'SMART',
+        serious: 'Phone era starting in the 2000s',
+        funny:
+          "A device that knows everything except when you're trying to unlock it",
+      },
+
+      {
+        word: 'METOO',
+        serious: '2017 social movement',
+        funny: 'A hashtag that changed workplace culture',
+      },
+      {
+        word: 'BITCOIN',
+        serious: 'Digital gold (2009)',
+        funny: 'Money that exists if you remember the password',
+      },
+      {
+        word: 'HUBBLE',
+        serious: 'Telescope (updated 2009)',
+        funny: 'The eye in the sky replaced by James Webb',
+      },
+      {
+        word: 'WEBB',
+        serious: 'James ___ Space Telescope',
+        funny: 'The new gold-plated eye in the sky',
+      },
+      {
+        word: 'DARPA',
+        serious: '21st c. tech agency',
+        funny: 'The "mad scientists" of the government',
+      },
+      {
+        word: 'TALIBAN',
+        serious: 'Afghan group (2021 return)',
+        funny: 'The group that returned to power in Kabul',
+      },
+      {
+        word: 'KATRINA',
+        serious: '2005 New Orleans storm',
+        funny: 'The hurricane that broke the levees',
+      },
+      {
+        word: 'GILLARD',
+        serious: 'First female AU Prime Minister',
+        funny: 'A trailblazer from the Land Down Under',
+      },
+      {
+        word: 'MALALA',
+        serious: 'Nobel winner Yousafzai',
+        funny: 'The girl who stood up to the Taliban',
+      },
+      {
+        word: 'SWIPE',
+        serious: 'Tinder movement',
+        funny: 'How we find dates or pay for groceries',
+      },
+      {
+        word: 'SELFIES',
+        serious: '21st c. photo trend',
+        funny: "Taking a picture of yourself at arm's length",
+      },
+      {
+        word: 'CRYPTO',
+        serious: 'Digital currency class',
+        funny: "Money that's backed by math, not gold",
+      },
+
+      {
+        word: 'BLOCKCHAIN',
+        serious: 'Tech behind Bitcoin',
+        funny: "The digital ledger that can't be erased",
+      },
+      {
+        word: 'BREXITEER',
+        serious: 'Supporter of UK exit',
+        funny: 'Someone who wanted to leave the EU',
+      },
+      {
+        word: 'MAGA',
+        serious: '2016 campaign slogan',
+        funny: 'Four letters on a red hat',
+      },
+      {
+        word: 'CLIMATE',
+        serious: 'Global 21st c. concern',
+        funny: 'What we\'re trying to save from "warming"',
+      },
+      {
+        word: 'TERROR',
+        serious: 'War on ___ (2001-)',
+        funny: 'A long global conflict against an abstract noun',
+      },
+      {
+        word: 'REAPER',
+        serious: 'Predator or Reaper',
+        funny: 'A plane that flies itself (and never asks for snacks)',
+      },
+      {
+        word: 'TURING',
+        serious: '2021 UK banknote star',
+        funny: 'The "Father of AI" on the 50-pound note',
+      },
+      {
+        word: 'ENRON',
+        serious: '2001 corporate scandal',
+        funny: 'The company that cooked its books to a crisp',
+      },
+      {
+        word: 'TESLA',
+        serious: "Musk's electric car company",
+        funny: 'A car that runs on batteries and hype',
+      },
+      {
+        word: 'UBER',
+        serious: '2009 ride-hailing debut',
+        funny: 'The app that killed the taxi industry',
+      },
+      {
+        word: 'VENMO',
+        serious: '2009 payment app',
+        funny: 'How you pay your friend back for pizza',
+      },
+      {
+        word: 'OCASIO',
+        serious: '"AOC" of Congress',
+        funny: 'A young Bronx rep in the headlines',
+      },
+      {
+        word: 'RECESSION',
+        serious: 'The "Great" one of 2008',
+        funny: 'A very bad time for the global economy',
+      },
+      {
+        word: 'BINLADEN',
+        serious: 'Target of 2011 raid',
+        funny: 'The man in hiding found in a compound',
+      },
+      {
+        word: 'CHIRAC',
+        serious: '2000s French President',
+        funny: 'A leader who said "Non" to the Iraq War',
+      },
+      {
+        word: 'BLAIR',
+        serious: 'UK PM during Iraq War',
+        funny: "Bush's closest ally in the 2000s",
+      },
+      {
+        word: 'POPE',
+        serious: 'Francis or Benedict XVI',
+        funny: 'The man in the white hat at the Vatican',
+      },
+      {
+        word: 'CANCEL',
+        serious: '___ Culture trend',
+        funny: 'What happens when the internet turns on you',
+      },
+      {
+        word: 'HASHTAG',
+        serious: 'Social media label',
+        funny: 'The pound sign that rules discourse',
+      },
+      {
+        word: 'METAVERSE',
+        serious: "Zuckerberg's 2021 vision",
+        funny: 'A digital world where we all wear goggles',
+      },
+      {
+        word: 'GENZ',
+        serious: 'Current youth generation',
+        funny: 'People born with a smartphone in their hand',
+      },
+      {
+        word: 'COVID',
+        serious: '2019-2022 pandemic',
+        funny: 'The reason we all stayed home for a year',
+      },
+      {
+        word: 'DELTA',
+        serious: 'COVID variant',
+        funny: 'A letter of the Greek alphabet or a virus',
+      },
+      {
+        word: 'OMICRON',
+        serious: '2021 COVID variant',
+        funny: 'The last big wave of the pandemic',
+      },
+      {
+        word: 'ZOOM',
+        serious: 'Virtual meeting platform',
+        funny: 'A word that means go fast or stay home',
+      },
+      {
+        word: 'SPACE',
+        serious: 'The New ___ Race',
+        funny: 'Where Bezos, Branson, and Musk are headed',
+      },
+      {
+        word: 'WALL',
+        serious: '2016 border controversy',
+        funny: 'A "Big Beautiful" structure that was debated',
+      },
+      {
+        word: 'REFERENDUM',
+        serious: '2016 UK vote',
+        funny: 'A national coin-flip with opinions',
+      },
+    ],
+    puzzles: [],
+  },
+
   sports: {
     id: 'sports',
     name: 'Sports',
@@ -1182,6 +3810,553 @@ const PACKS = {
               r0c0: 'People you blame with you',
               r0c4: 'Volley marathon',
               r0c6: 'Where the ball gets caught',
+            },
+          },
+        },
+      },
+    ],
+  },
+
+  animals: {
+    id: 'animals',
+    name: 'Animals',
+    wordBank: [
+      {
+        word: 'APE',
+        serious: 'Primate such as a gorilla',
+        funny: "Guy who's all knuckles and no manners",
+      },
+      {
+        word: 'BEE',
+        serious: 'Pollinating insect',
+        funny: 'A fuzzy pilot looking for a buzz',
+      },
+      {
+        word: 'CAT',
+        serious: 'Feline pet',
+        funny: 'The real owner of your house',
+      },
+      {
+        word: 'DOG',
+        serious: 'Canis lupus familiaris',
+        funny: 'A professional tail-wagger',
+      },
+      {
+        word: 'ELK',
+        serious: 'Large North American deer',
+        funny: 'A deer with a very expensive hat',
+      },
+      {
+        word: 'EMU',
+        serious: 'Flightless Australian bird',
+        funny: 'A giant feather duster on legs',
+      },
+      {
+        word: 'EEL',
+        serious: 'Moray or conger',
+        funny: 'A slippery tube with teeth',
+      },
+      {
+        word: 'FLY',
+        serious: 'Common dipterous insect',
+        funny: 'The uninvited guest at every picnic',
+      },
+      {
+        word: 'HEN',
+        serious: 'Female chicken',
+        funny: 'A professional egg-layer',
+      },
+      {
+        word: 'KOI',
+        serious: 'Decorative carp',
+        funny: 'A fish that’s too "shy" to speak?',
+      },
+      {
+        word: 'OWL',
+        serious: 'Nocturnal bird of prey',
+        funny: 'A bird that gives a hoot',
+      },
+      {
+        word: 'PIG',
+        serious: 'Farm animal raised for pork',
+        funny: 'A pink vacuum for table scraps',
+      },
+      { word: 'RAT', serious: 'Common rodent', funny: 'A mouse on steroids' },
+      {
+        word: 'YAK',
+        serious: 'Shaggy-haired ox',
+        funny: 'An animal that never stops talking?',
+      },
+      {
+        word: 'BEAR',
+        serious: 'Ursine mammal',
+        funny: 'A forest-dweller who loves a long nap',
+      },
+      {
+        word: 'BOAR',
+        serious: 'Wild pig',
+        funny: 'A swine that’s a real "snore" at parties',
+      },
+      {
+        word: 'DEER',
+        serious: 'Antlered ruminant',
+        funny: 'Someone’s "fawn"ed over favorite',
+      },
+      {
+        word: 'DOVE',
+        serious: 'Symbol of peace',
+        funny: 'A pigeon with a better PR agent',
+      },
+      {
+        word: 'DUCK',
+        serious: 'Quacking waterfowl',
+        funny: 'An animal that tells you to lower your head',
+      },
+      {
+        word: 'FROG',
+        serious: 'Amphibian that leaps',
+        funny: 'A prince who’s had a very bad day',
+      },
+      {
+        word: 'GOAT',
+        serious: 'Sure-footed ruminant',
+        funny: 'An animal that will eat your homework',
+      },
+      {
+        word: 'HARE',
+        serious: 'Fast-running lagomorph',
+        funny: 'A rabbit with a need for speed',
+      },
+      {
+        word: 'IBIS',
+        serious: 'Wading bird with a curved beak',
+        funny: 'An Egyptian god’s favorite feather-head',
+      },
+      {
+        word: 'LION',
+        serious: 'King of the jungle',
+        funny: 'A big cat with a very loud "hair"day',
+      },
+      {
+        word: 'LYNX',
+        serious: 'Tufted-ear wildcat',
+        funny: 'A cat that’s missing its "u"',
+      },
+      {
+        word: 'MOTH',
+        serious: 'Nocturnal winged insect',
+        funny: 'A butterfly that only dresses in gray',
+      },
+      {
+        word: 'NEWT',
+        serious: 'Small salamander',
+        funny: 'What the witch turned me into (I got better)',
+      },
+      {
+        word: 'ORYX',
+        serious: 'Straight-horned antelope',
+        funny: 'A desert animal with built-in skewers',
+      },
+      {
+        word: 'SEAL',
+        serious: 'Marine pinniped',
+        funny: 'A slippery dog that loves raw fish',
+      },
+      {
+        word: 'SWAN',
+        serious: 'Long-necked waterbird',
+        funny: "An ugly duckling's final form",
+      },
+      {
+        word: 'TOAD',
+        serious: 'Warty amphibian',
+        funny: 'A frog with a serious skin condition',
+      },
+      {
+        word: 'WOLF',
+        serious: 'Pack-hunting canine',
+        funny: 'The guy who keeps blowing houses down',
+      },
+
+      {
+        word: 'ADDAX',
+        serious: 'Sahara antelope',
+        funny: 'A creature that sounds like a math problem',
+      },
+      {
+        word: 'CHIMP',
+        serious: 'Intelligent primate',
+        funny: 'Your closest relative at the zoo',
+      },
+      {
+        word: 'DINGO',
+        serious: 'Wild Australian dog',
+        funny: 'The canine that "ate the baby"',
+      },
+      {
+        word: 'EGRET',
+        serious: 'White-plumed heron',
+        funny: 'A bird that sounds like a missed opportunity',
+      },
+      {
+        word: 'HYENA',
+        serious: 'Scavenging carnivore',
+        funny: "The zoo's only stand-up comedian",
+      },
+      {
+        word: 'LEMUR',
+        serious: 'Madagascan primate',
+        funny: 'A monkey wearing a striped mask',
+      },
+      {
+        word: 'LLAMA',
+        serious: 'Andean pack animal',
+        funny: 'A camel that forgot its hump',
+      },
+      {
+        word: 'MOUSE',
+        serious: 'Small house rodent',
+        funny: "A computer accessory's namesake",
+      },
+      {
+        word: 'OKAPI',
+        serious: 'Giraffe relative with zebra legs',
+        funny: 'An animal designed by a committee',
+      },
+      {
+        word: 'OTTER',
+        serious: 'Semi-aquatic weasel',
+        funny: 'A water-weasel that holds hands',
+      },
+      {
+        word: 'PANDA',
+        serious: 'Bamboo-eating bear',
+        funny: 'A bear that’s strictly black and white',
+      },
+      {
+        word: 'ROACH',
+        serious: 'Common household pest',
+        funny: 'The only thing that survives the apocalypse',
+      },
+      {
+        word: 'SHEEP',
+        serious: 'Wool-producing animal',
+        funny: 'A cloud with legs that says "baa"',
+      },
+      {
+        word: 'SHREW',
+        serious: 'Tiny insectivorous mammal',
+        funny: 'A tiny animal with a big temper',
+      },
+      { word: 'SNAKE', serious: 'Legless reptile', funny: 'A danger noodle' },
+      {
+        word: 'SQUID',
+        serious: 'Ten-armed cephalopod',
+        funny: 'An ink-jet printer with tentacles',
+      },
+      {
+        word: 'TIGER',
+        serious: 'Striped feline',
+        funny: 'A cat that "grrr-eats" frosted flakes',
+      },
+      {
+        word: 'WHALE',
+        serious: 'Massive marine mammal',
+        funny: 'A submarine made of blubber',
+      },
+      {
+        word: 'ZEBRA',
+        serious: 'Striped African equine',
+        funny: "A horse in a referee's uniform",
+      },
+
+      {
+        word: 'BABOON',
+        serious: 'Large Old World monkey',
+        funny: 'A primate with a colorful backside',
+      },
+      {
+        word: 'BEAGLE',
+        serious: 'Scent hound breed',
+        funny: 'Snoopy’s actual species',
+      },
+      {
+        word: 'COUGAR',
+        serious: 'Puma or mountain lion',
+        funny: 'A big cat or a dating stereotype',
+      },
+      {
+        word: 'COYOTE',
+        serious: 'North American wild dog',
+        funny: 'ACME’s #1 customer',
+      },
+      {
+        word: 'DONKEY',
+        serious: 'Ass or beast of burden',
+        funny: 'Shrek’s talkative sidekick',
+      },
+      {
+        word: 'ERMINE',
+        serious: 'Weasel in its white winter coat',
+        funny: 'A rodent that’s also a royal robe',
+      },
+      {
+        word: 'FALCON',
+        serious: 'Fast-flying bird of prey',
+        funny: 'A bird that’s also a Ford model',
+      },
+      {
+        word: 'GIRAFFE',
+        serious: 'Long-necked African mammal',
+        funny: 'A horse that’s been stretched out',
+      },
+      {
+        word: 'GOPHER',
+        serious: 'Burrowing rodent',
+        funny: 'The guy who "goes fer" coffee?',
+      },
+      {
+        word: 'JACKAL',
+        serious: 'Wild dog of Africa/Asia',
+        funny: "A canine that's a bit of a scavenger",
+      },
+      {
+        word: 'LIZARD',
+        serious: 'Scaly reptile',
+        funny: 'A small dinosaur living in your garden',
+      },
+      {
+        word: 'MONKEY',
+        serious: 'Arboreal primate',
+        funny: 'The creature responsible for "business"',
+      },
+      {
+        word: 'OCELOT',
+        serious: 'Spotted wildcat',
+        funny: 'A cat that’s "a lot" to handle',
+      },
+      {
+        word: 'OYSTER',
+        serious: 'Bivalve mollusk',
+        funny: 'A rock that makes jewelry',
+      },
+      {
+        word: 'PARROT',
+        serious: 'Mimicking bird',
+        funny: "A colorful bird that won't shut up",
+      },
+      {
+        word: 'PYTHON',
+        serious: 'Large constrictor snake',
+        funny: 'A snake that’s also a coding language',
+      },
+      {
+        word: 'RABBIT',
+        serious: 'Long-eared burrower',
+        funny: 'A professional carrot cruncher',
+      },
+      {
+        word: 'SALMON',
+        serious: 'Spawning river fish',
+        funny: 'A fish that’s always swimming upstream',
+      },
+      {
+        word: 'TOUCAN',
+        serious: 'Large-billed tropical bird',
+        funny: 'The bird that follows its nose',
+      },
+      {
+        word: 'TURTLE',
+        serious: 'Shelled reptile',
+        funny: 'A mobile home with legs',
+      },
+      {
+        word: 'URCHIN',
+        serious: 'Spiny sea creature',
+        funny: 'A prickly underwater pincushion',
+      },
+      {
+        word: 'WALRUS',
+        serious: 'Tusked marine mammal',
+        funny: 'A seal with a serious mustache',
+      },
+
+      {
+        word: 'AARDVARK',
+        serious: 'African ant-eater',
+        funny: 'The first animal in the dictionary',
+      },
+      {
+        word: 'BUFFALO',
+        serious: 'Large wild ox',
+        funny: 'A city in NY or a hairy beast',
+      },
+      {
+        word: 'CHEETAH',
+        serious: 'Fastest land animal',
+        funny: 'A feline that never plays fair',
+      },
+      {
+        word: 'CHICKEN',
+        serious: 'Common poultry',
+        funny: 'The animal that crossed the road',
+      },
+      {
+        word: 'DOLPHIN',
+        serious: 'Intelligent marine mammal',
+        funny: 'A porpoise with a purpose',
+      },
+      {
+        word: 'ELEPHANT',
+        serious: 'Largest land mammal',
+        funny: 'The only one in the room nobody talks about',
+      },
+      {
+        word: 'FLAMINGO',
+        serious: 'Pink wading bird',
+        funny: 'A bird that’s a lawn ornament',
+      },
+      {
+        word: 'GAZELLE',
+        serious: 'Graceful antelope',
+        funny: 'A fast runner with thin legs',
+      },
+      {
+        word: 'HAMSTER',
+        serious: 'Small pet rodent',
+        funny: 'A creature that lives in a wheel',
+      },
+      {
+        word: 'KANGAROO',
+        serious: 'Pouch-bearing marsupial',
+        funny: 'An Australian with a built-in purse',
+      },
+      {
+        word: 'LEOPARD',
+        serious: 'Spotted big cat',
+        funny: "An animal that can't change its spots",
+      },
+      {
+        word: 'MANATEE',
+        serious: 'Aquatic "sea cow"',
+        funny: 'A floating potato that lives in Florida',
+      },
+      {
+        word: 'MEERKAT',
+        serious: 'Social African mongoose',
+        funny: 'A sentry that’s always on its tiptoes',
+      },
+      {
+        word: 'OSTRICH',
+        serious: 'Largest flightless bird',
+        funny: "An animal that thinks you can't see it",
+      },
+      {
+        word: 'PANTHER',
+        serious: 'Black wildcat',
+        funny: "A cat that's very 'Pink' in movies",
+      },
+      {
+        word: 'PELICAN',
+        serious: 'Large-billed waterbird',
+        funny: 'A bird whose beak holds more than its belly',
+      },
+      {
+        word: 'PENGUIN',
+        serious: 'Flightless Antarctic bird',
+        funny: 'A bird in a permanent tuxedo',
+      },
+      {
+        word: 'PLATYPUS',
+        serious: 'Egg-laying mammal',
+        funny: 'Nature’s weirdest mash-up',
+      },
+      {
+        word: 'RACCOON',
+        serious: 'Masked nocturnal mammal',
+        funny: 'A "trash panda"',
+      },
+
+      {
+        word: 'SCORPION',
+        serious: 'Arachnid with a stinger',
+        funny: 'A bug with a lethal tail-light',
+      },
+      {
+        word: 'SQUIRREL',
+        serious: 'Bushy-tailed rodent',
+        funny: 'A nut-gathering park ninja',
+      },
+      {
+        word: 'WARTHOG',
+        serious: 'Tusked wild pig',
+        funny: 'Pumbaa’s real-life relative',
+      },
+      {
+        word: 'HERON',
+        serious: 'Long-legged wading bird',
+        funny: "A bird that looks like it's waiting for a bus that never comes",
+      },
+      {
+        word: 'GUPPY',
+        serious: 'Small freshwater fish',
+        funny: 'The "starter" fish for every 5-year-old',
+      },
+      {
+        word: 'BADGER',
+        serious: 'Nocturnal burrowing mammal',
+        funny: "An animal that really doesn't care",
+      },
+      {
+        word: 'SLOTH',
+        serious: 'Slow-moving tree dweller',
+        funny: 'The official mascot of Monday mornings',
+      },
+      {
+        word: 'MOOSE',
+        serious: 'Large palmate-antlered deer',
+        funny: 'A deer on a massive growth hormone',
+      },
+    ],
+
+    // Safety net: one tiny built-in puzzle so pack never hard-fails if generation ever throws.
+    puzzles: [
+      {
+        id: 'ani-001',
+        title: 'Animals Mini',
+        difficulty: 'easy',
+        grid: ['CAT#DOG', 'A#O#A#O', 'TAR#RAT', '###A###', 'OWL#EMU'],
+        clues: {
+          serious: {
+            across: {
+              r0c0: 'Feline pet',
+              r0c4: 'Canis lupus familiaris',
+              r2c0: 'Sticky black substance',
+              r2c4: 'Common rodent',
+              r4c0: 'Nocturnal bird of prey',
+              r4c4: 'Flightless Australian bird',
+            },
+            down: {
+              r0c0: 'C, then A, then T (down)',
+              r0c2: 'A short rocky peak (down)',
+              r0c4: 'A quick dash (down)',
+              r0c6: 'A small bird sound (down)',
+            },
+          },
+          funny: {
+            across: {
+              r0c0: 'The real owner of your house',
+              r0c4: 'A professional tail-wagger',
+              r2c0: 'Road glue',
+              r2c4: 'A mouse on steroids',
+              r4c0: 'A bird that gives a hoot',
+              r4c4: 'A giant feather duster on legs',
+            },
+            down: {
+              r0c0: 'Down word: CAT (very on-brand)',
+              r0c2: 'Down word: TOR (not an animal, sorry)',
+              r0c4: 'Down word: DAR (tiny word, big dreams)',
+              r0c6: 'Down word: GOT (what you’ll say when you solve it)',
             },
           },
         },
@@ -1655,6 +4830,68 @@ const PACKS = {
   },
 };
 
+// ─────────────────────────────────────────────
+// "Everything" pack support
+// "Everything" is a virtual pack that pulls from all installed packs.
+// This automatically includes future packs added to PACKS.
+// ─────────────────────────────────────────────
+
+const EVERYTHING_PACK_ID = 'everything';
+
+function getInstalledPacks() {
+  // Only real packs that live inside PACKS (future packs auto-included).
+  return Object.values(PACKS).filter(
+    (p) => p && p.id && p.id !== EVERYTHING_PACK_ID
+  );
+}
+
+function buildEverythingWordBank() {
+  // Merge all word banks, dedupe by normalized word.
+  // If duplicates exist across packs, we keep the first one seen.
+  const byWord = new Map();
+
+  for (const pack of getInstalledPacks()) {
+    const bank = Array.isArray(pack.wordBank) ? pack.wordBank : [];
+    for (const item of bank) {
+      const w = normalizeWord(item?.word);
+      if (!w) continue;
+
+      if (!byWord.has(w)) {
+        byWord.set(w, {
+          word: w,
+          serious: item?.serious || '(Generated clue)',
+          funny: item?.funny || item?.serious || '(Generated clue)',
+        });
+      }
+    }
+  }
+
+  return Array.from(byWord.values());
+}
+
+function pickPuzzleFromAllPacks(difficulty) {
+  // Build a pool of puzzles tagged with their source pack.
+  const pool = [];
+
+  for (const pack of getInstalledPacks()) {
+    const puzzles = Array.isArray(pack.puzzles) ? pack.puzzles : [];
+    for (const p of puzzles) {
+      if (!p) continue;
+      pool.push({ pack, puzzle: p });
+    }
+  }
+
+  if (!pool.length) return null;
+
+  // Prefer matching difficulty, otherwise fallback to any.
+  const filtered = pool.filter(
+    (x) => x.puzzle && x.puzzle.difficulty === difficulty
+  );
+  const chosen = pickRandom(filtered.length ? filtered : pool);
+
+  return chosen || null;
+}
+
 function getSelectedPackId() {
   const sel = document.getElementById('pack');
   return sel ? sel.value : 'general';
@@ -1662,7 +4899,16 @@ function getSelectedPackId() {
 
 function getSelectedTone() {
   const sel = document.getElementById('tone');
-  return sel ? sel.value : 'serious';
+  const raw = sel ? sel.value : 'serious';
+
+  // "random" resolves once per generated puzzle.
+  // We resolve inside initCrosswordFromSelections() by calling this once,
+  // so the entire puzzle stays consistent (no mid-game tone flipping).
+  if (raw === 'random') {
+    return Math.random() < 0.5 ? 'serious' : 'funny';
+  }
+
+  return raw;
 }
 
 function pickRandom(arr) {
@@ -1880,17 +5126,27 @@ function rememberPuzzleWords(packId, wordsUsed) {
 }
 
 /**
- * Phase 4: Simple Across-only generator.
+ * Simple Across-only generator.
  * - Creates a square grid
  * - Places words left-to-right on rows with block separators
  * - Builds clue maps for Across and Down starts
  * - Returns a "puzzle-like" object that matches what buildCrosswordModel expects
  */
 function generatePuzzleFromWordBank({ packId, tone, difficulty, timeLength }) {
-  const pack = PACKS[packId] || PACKS.general;
+  //  Everything pack is virtual and dynamic.
+  const pack =
+    packId === EVERYTHING_PACK_ID
+      ? {
+          id: EVERYTHING_PACK_ID,
+          name: 'Everything',
+          wordBank: buildEverythingWordBank(),
+        }
+      : PACKS[packId] || PACKS.general;
+
   const size = TIME_LENGTH_TO_SIZE[timeLength] || TIME_LENGTH_TO_SIZE.medium;
 
   const bank = Array.isArray(pack.wordBank) ? pack.wordBank : [];
+
   if (bank.length < 6) {
     throw new Error(`CRSWRD: wordBank too small for pack "${packId}"`);
   }
@@ -2391,6 +5647,35 @@ function buildGeneratedClues({ grid, placedWords, tone }) {
 }
 
 function getPuzzleFromPack(packId, tone, difficulty) {
+  // Session 14: Everything pack fallback pulls from all packs' prebuilt puzzles.
+  if (packId === EVERYTHING_PACK_ID) {
+    const pick = pickPuzzleFromAllPacks(difficulty);
+
+    // If we somehow have no puzzles anywhere, fall back to General.
+    if (!pick) {
+      return getPuzzleFromPack('general', tone, difficulty);
+    }
+
+    const { pack, puzzle } = pick;
+
+    const clueSet =
+      tone === 'funny'
+        ? puzzle.clues.funny || puzzle.clues.serious
+        : puzzle.clues.serious;
+
+    return {
+      grid: puzzle.grid,
+      clues: clueSet,
+      meta: {
+        packId: pack.id,
+        puzzleId: puzzle.id,
+        title: puzzle.title,
+        difficulty: puzzle.difficulty || 'unknown',
+      },
+    };
+  }
+
+  // Normal pack behavior
   const pack = PACKS[packId] || PACKS.general;
   const puzzle =
     pickRandomByDifficulty(pack.puzzles, difficulty) || pack.puzzles[0];
@@ -2488,6 +5773,22 @@ function initCrosswordFromSelections() {
   }
 
   const state = createCrosswordState(model);
+
+  // Store "what am I playing?" info so the UI can display it.
+  // We keep both:
+  // - selectedPackId: what the user chose (ex: "everything")
+  // - packId/packName: what actually got used (ex: "movies")
+  const usedPackId = puzzle?.meta?.packId || packId;
+  const usedPackName = (PACKS[usedPackId]?.name || usedPackId || '').trim();
+
+  state.meta = {
+    selectedPackId: packId,
+    usedPackId,
+    usedPackName,
+    difficulty,
+    tone,
+    timeLength,
+  };
 
   renderCrossword(mounts.host, model, state);
   renderClues(mounts.acrossList, mounts.downList, model, state);
@@ -3106,9 +6407,32 @@ function syncUI(host, acrossList, downList, model, state) {
 function syncActiveBar(model, state) {
   const dirEl = document.getElementById('activeDir');
   const clueEl = document.getElementById('activeClue');
+  const metaEl = document.getElementById('activeMeta');
   if (!dirEl || !clueEl) return;
 
   dirEl.textContent = state.direction === 'across' ? 'Across' : 'Down';
+
+  // Build the right-side meta string (pack, difficulty, tone, grid size).
+  if (metaEl) {
+    const m = state?.meta || {};
+    const usedPackName = m.usedPackName || '';
+    const diff = (m.difficulty || '').toString();
+    const tone = (m.tone || '').toString();
+    const size = (m.timeLength || '').toString();
+
+    // If the user picked "Everything", but we used a specific pack, show both.
+    const pickedEverything =
+      m.selectedPackId === EVERYTHING_PACK_ID &&
+      m.usedPackId &&
+      m.usedPackId !== EVERYTHING_PACK_ID;
+
+    const packPart = pickedEverything
+      ? `Everything → ${usedPackName}`
+      : usedPackName || 'Pack';
+
+    const bits = [packPart, diff, tone, size].filter(Boolean);
+    metaEl.textContent = bits.join(' · ');
+  }
 
   const entry = getActiveEntry(model, state);
   if (!entry) {
@@ -3725,62 +7049,102 @@ function generateNewPuzzle() {
 document.addEventListener('DOMContentLoaded', init);
 
 // ─────────────────────────────────────────────
-// DEV ONLY — Word bank sanity checker
-// Call from console: checkWordBank(PACKS.general)
+// DEV ONLY - Pack sanity + quick counts (console helpers)
 // ─────────────────────────────────────────────
+
+/**
+ * Word bank sanity checker.
+ * Usage:
+ *   checkWordBank(PACKS.general)
+ *   checkWordBank(PACKS.music)
+ */
 function checkWordBank(pack, requiredWords = []) {
-  const words = pack.wordBank.map((w) => w.word.toUpperCase());
+  const words = (pack.wordBank || []).map((w) =>
+    String(w.word || '').toUpperCase()
+  );
   const unique = new Set(words);
 
   const duplicates = words.filter((w, i) => words.indexOf(w) !== i);
 
-  const lengths = {
-    3: 0,
-    4: 0,
-    5: 0,
-    6: 0,
-    '7+': 0,
-  };
-
+  const lengths = { 3: 0, 4: 0, 5: 0, 6: 0, '7+': 0 };
   words.forEach((w) => {
     if (w.length <= 6) lengths[String(w.length)]++;
     else lengths['7+']++;
   });
 
   const missingRequired = requiredWords.filter(
-    (w) => !unique.has(w.toUpperCase())
+    (w) => !unique.has(String(w).toUpperCase())
   );
 
-  console.group(`🧩 WordBank Check: ${pack.name}`);
-  console.log('Total words:', words.length);
-  console.log('Unique words:', unique.size);
-  console.log('Length distribution:', lengths);
+  console.log(`[CRSWRD] Pack: ${pack.id} (${pack.name})`);
+  console.log(`Words: ${words.length} | Unique: ${unique.size}`);
+  console.log('Length buckets:', lengths);
 
-  if (duplicates.length) {
-    console.warn('Duplicate words:', [...new Set(duplicates)]);
+  if (duplicates.length) console.warn('Duplicates:', [...new Set(duplicates)]);
+  if (missingRequired.length)
+    console.warn('Missing required:', missingRequired);
+
+  // Basic clue presence check
+  const bad = (pack.wordBank || []).filter(
+    (w) =>
+      !w.word ||
+      !w.serious ||
+      !w.funny ||
+      String(w.word).trim().length < 3 ||
+      String(w.serious).trim().length < 2 ||
+      String(w.funny).trim().length < 2
+  );
+
+  if (bad.length) {
+    console.warn(
+      `Bad entries (${bad.length}):`,
+      bad.map((x) => x.word)
+    );
   } else {
-    console.log('No duplicates ✅');
+    console.log('All entries have word + serious + funny.');
   }
-
-  if (requiredWords.length) {
-    if (missingRequired.length) {
-      console.warn('Missing required words:', missingRequired);
-    } else {
-      console.log('All required words present ✅');
-    }
-  }
-
-  console.groupEnd();
 }
 
-// ─────────────────────────────────────────────
-// Session 7 — Debug helper (console only)
-// ─────────────────────────────────────────────
+/**
+ * Quick pack counts.
+ * Usage:
+ *   packCounts()
+ */
+window.packCounts = function packCounts() {
+  const rows = Object.values(PACKS).map((p) => ({
+    id: p.id,
+    name: p.name,
+    words: p.wordBank?.length || 0,
+    puzzles: p.puzzles?.length || 0,
+  }));
+  rows.sort((a, b) => b.words - a.words);
+  console.table(rows);
+};
+
+/**
+ * Run sanity checks for the original baseline packs only (the 4 you started with).
+ * Usage:
+ *   checkAllWordBanks()
+ */
+window.checkAllWordBanks = function checkAllWordBanks() {
+  const baseline = ['general', 'movies', 'sports', 'holidays'];
+
+  baseline.forEach((id) => {
+    const p = PACKS[id];
+    if (!p) {
+      console.warn(`[CRSWRD] Missing pack: ${id}`);
+      return;
+    }
+    checkWordBank(p);
+  });
+
+  console.log('[CRSWRD] Done. Tip: run packCounts() for a quick summary.');
+};
 
 /**
  * Inspect recent-word memory for a pack.
- * Usage in DevTools:
- *   dumpRecentMemory('general')
+ * Usage:
+ *   dumpRecentMemory("music")
  */
 window.dumpRecentMemory = function dumpRecentMemory(packId) {
   const puzzles = recentWordMemoryByPack.get(packId);
@@ -3790,9 +7154,5 @@ window.dumpRecentMemory = function dumpRecentMemory(packId) {
     return;
   }
 
-  console.log(`[CRSWRD] Recent word memory for "${packId}" (oldest → newest):`);
-
-  puzzles.forEach((words, i) => {
-    console.log(`  #${i + 1} (${words.length} words):`, words.join(', '));
-  });
+  console.log(`[CRSWRD] Recent memory for "${packId}":`, puzzles);
 };
