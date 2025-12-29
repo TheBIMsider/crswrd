@@ -22,7 +22,7 @@ No accounts. No installs. Just puzzles.
 👉 https://thebimsider.github.io/crswrd/
 
 <p align="center">
-  <img width="1920" height="945" alt="CRSWRD_Readme_Sample" src="https://github.com/user-attachments/assets/5bf80851-37d5-436c-8fe4-b34bfd64a125" />
+  <img width="1920" height="945" alt="CRSWRD_Readme_Sample" src="https://github.com/user-attachments/assets/5bf80851-37d5-436c-8fe4-b34bfd64a125"
     alt="CRSWRD in action"
     width="900"
   />
@@ -107,4 +107,5 @@ This project is licensed under the BSD-3-Clause License.
 
 Vibe-coded by The BIMsider with ChatGPT.  
 Built as an experiment in lightweight, client-side game design.
+
 
