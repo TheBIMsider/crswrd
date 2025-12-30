@@ -6305,7 +6305,13 @@ function wireCrosswordInteractions(host, acrossList, downList, model, state) {
     // Letting click run as well causes focus churn and keyboard flicker.
     if (isTouchLikely()) {
       // Prevent the browser from moving focus onto the grid button.
-      if (e.target.closest('.cell')) e.preventDefault();
+      if (e.target.closest('.cell')) {
+        e.preventDefault();
+
+        // Samsung/Chrome/Edge: pointerdown focus can fail.
+        // This click is still a valid user gesture, so force-focus the hidden input.
+        focusMobileInput();
+      }
       return;
     }
 

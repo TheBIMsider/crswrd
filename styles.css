@@ -592,30 +592,31 @@ select:focus {
   color: var(--text);
 }
 
-/* Mobile keyboard bridge input
-   Visually hidden, but still focusable.
-   Android Chromium (Chrome/Edge) often refuses to open the keyboard
-   if the input is off-screen or not interactable. */
+/* Mobile keyboard bridge input (hidden but focusable) */
 .mobile-input {
   position: fixed;
-  left: 8px;
-  top: 8px;
+  left: 0;
+  top: 0;
+
+  /* Keep it effectively invisible, but NOT "display:none" */
   width: 1px;
   height: 1px;
+  opacity: 0.01;
 
-  /* Keep it effectively invisible */
-  opacity: 0.001;
+  /* Critical: allow a real focus/click target for Chrome/Edge */
+  pointer-events: auto;
+
+  /* Keep it out of the way */
+  z-index: 9999;
+
+  /* Reduce any weird zoom/selection behavior */
+  font-size: 16px;
   border: 0;
   padding: 0;
   margin: 0;
-
   background: transparent;
   color: transparent;
   caret-color: transparent;
-
-  /* Must remain "real" to Chromium */
-  pointer-events: auto;
-  z-index: 2147483647; /* max-ish, so it never ends up behind anything */
 }
 
 /* Stack clues under the grid on smaller screens */
