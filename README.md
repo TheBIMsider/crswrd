@@ -1,12 +1,4 @@
-# CRSWRD
-
-<p align="center">
-  <a href="https://github.com/thebimsider/crswrd/releases/tag/v1.0.0">
-    <img src="https://img.shields.io/badge/release-v1.0.0-brightgreen"
-         alt="CRSWRD v1.0.0 release" />
-  </a>
-</p>
-
+# CRSWRD <a href="https://github.com/thebimsider/crswrd/releases/tag/v1.0.0"><img src="https://img.shields.io/badge/v1.0.0-release-brightgreen" alt="v1.0.0" /></a>
 
 <p align="center">
   <img
@@ -130,4 +122,5 @@ This project is licensed under the BSD-3-Clause License.
 
 Vibe-coded by The BIMsider with ChatGPT.  
 Built as an experiment in lightweight, client-side game design.
+
 
