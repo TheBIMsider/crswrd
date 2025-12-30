@@ -22,13 +22,20 @@ No accounts. No installs. Just puzzles.
 👉 https://thebimsider.github.io/crswrd/
 
 <p align="center">
-  <img width="1920" height="945" alt="CRSWRD_Readme_Sample" src="https://github.com/user-attachments/assets/5bf80851-37d5-436c-8fe4-b34bfd64a125"
+  <img
+    src="https://github.com/user-attachments/assets/5bf80851-37d5-436c-8fe4-b34bfd64a125"
     alt="CRSWRD in action"
     width="900"
   />
 </p>
 
-*CRSWRD in action — a puzzle mid-solve.*
+_CRSWRD in action — a puzzle mid-solve._
+
+---
+
+## Landing page
+
+👉 https://thebimsider.github.io/crswrd/landing/
 
 ---
 
@@ -57,29 +64,40 @@ No accounts. No installs. Just puzzles.
 - Not a daily crossword
 - Not competitive or scored
 - No puzzle saving or history (yet)
-- No guarantee every generated puzzle is perfectly balanced (this is a beta)
+- No guarantee every generated puzzle is perfectly balanced (beta behavior)
 
 ---
 
 ## Word packs
 
-CRSWRD currently includes:
+CRSWRD includes **10** curated word packs (100 words each), plus an **Everything** mode that mixes words from all installed packs.
+
+**Included packs:**
 
 - General
 - Movies
 - Sports
 - Holidays
+- Animals
+- Music
+- Transportation
+- The 80's
+- The 90's
+- World Events
 
-Each pack contains 100 curated words and supports multiple grid sizes.
+**Everything mode:**
+
+- “Everything” is not a separate pack.
+- It randomly pulls from all installed packs, so it automatically includes future packs too.
 
 ---
 
 ## Known limitations
 
 - Puzzle difficulty can vary due to random generation
-- No puzzle saving or resume
+- No puzzle saving or resume (yet)
 - No zoom or pan for large grids (planned)
-- Best experienced in modern desktop and mobile browsers
+- Mobile works, but the best experience is still on desktop
 
 ---
 
@@ -88,6 +106,7 @@ Each pack contains 100 curated words and supports multiple grid sizes.
 This is an early beta.
 
 If something breaks or feels off:
+
 - Open a GitHub Issue
 - Include your browser and device
 - Describe what you did and what you expected to happen
@@ -107,5 +126,3 @@ This project is licensed under the BSD-3-Clause License.
 
 Vibe-coded by The BIMsider with ChatGPT.  
 Built as an experiment in lightweight, client-side game design.
-
-
