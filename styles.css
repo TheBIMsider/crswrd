@@ -620,6 +620,22 @@ select:focus {
   outline: none;
 }
 
+/* Touch-only UI: hidden by default, enabled when JS adds body.has-touch */
+.touch-only {
+  display: none;
+}
+
+body.has-touch .touch-only {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.keyboard-bar {
+  flex-wrap: wrap;
+  row-gap: 6px;
+}
+
 /* Desktop: don’t let this steal focus or show any caret artifacts */
 body:not(.has-touch) .mobile-input {
   left: -9999px;
@@ -669,8 +685,8 @@ body.has-touch .touch-only {
   }
 }
 
-/* Phone-focused tweaks */
-@media (max-width: 520px) {
+/* Phone + tablet comfort */
+@media (max-width: 900px) {
   .mobile-only {
     display: block;
     margin-bottom: 10px;
