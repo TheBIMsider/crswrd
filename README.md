@@ -17,6 +17,12 @@ No accounts. No installs. Just puzzles.
 
 ---
 
+## Landing page
+
+👉 https://thebimsider.github.io/crswrd/landing/
+
+---
+
 ## Live demo
 
 👉 https://thebimsider.github.io/crswrd/
@@ -30,12 +36,6 @@ No accounts. No installs. Just puzzles.
 </p>
 
 _CRSWRD in action — a puzzle mid-solve._
-
----
-
-## Landing page
-
-👉 https://thebimsider.github.io/crswrd/landing/
 
 ---
 
@@ -126,3 +126,4 @@ This project is licensed under the BSD-3-Clause License.
 
 Vibe-coded by The BIMsider with ChatGPT.  
 Built as an experiment in lightweight, client-side game design.
+
