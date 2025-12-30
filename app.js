@@ -8,19 +8,24 @@ let CURRENT = null;
 let MOBILE_INPUT = null;
 
 function isTouchLikely() {
-  // Touch-capable detection that works on Android tablets in Chromium browsers.
-  // We also gate by screen width to avoid enabling on typical desktops.
+  // Touch-capable detection that keeps desktop stable, but does NOT break tablets in landscape.
   const maxTouchPoints = navigator.maxTouchPoints || 0;
 
   const coarse = window.matchMedia?.('(pointer: coarse)')?.matches ?? false;
   const noHover = window.matchMedia?.('(hover: none)')?.matches ?? false;
 
-  // Tablet/phone-ish screen gate (keeps desktop stable)
-  const smallishScreen =
-    window.matchMedia?.('(max-width: 1100px)')?.matches ?? false;
+  // Basic touch signal.
+  const touchCapable = maxTouchPoints > 0 || coarse || noHover;
 
-  // If device can touch and the screen is in the mobile/tablet range, treat as touch UI.
-  return smallishScreen && (maxTouchPoints > 0 || coarse || noHover);
+  // “Probably a real touch device” (tablets/phones), even in landscape:
+  // - coarse pointer or no-hover is a strong mobile/tablet signal
+  // - OR a smaller screen (helps catch edge cases)
+  const probablyTabletOrPhone =
+    coarse ||
+    noHover ||
+    (window.matchMedia?.('(max-width: 1100px)')?.matches ?? false);
+
+  return touchCapable && probablyTabletOrPhone;
 }
 
 function getMobileInput() {
@@ -288,7 +293,13 @@ function collapseConfigPanel(shouldCollapse) {
 
   if (!panel || !toggleBtn) return;
 
+  // Hide the panel itself
   panel.classList.toggle('is-collapsed', shouldCollapse);
+
+  // Tell CSS to collapse the whole layout column too (prevents “ghost” space)
+  document.body.classList.toggle('config-collapsed', shouldCollapse);
+
+  // Accessibility state
   toggleBtn.setAttribute('aria-expanded', String(!shouldCollapse));
 }
 
