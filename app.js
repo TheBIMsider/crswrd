@@ -416,6 +416,7 @@ function init() {
   wireCheckButtons();
   wireMobileKeyboard();
   wireKeyboardDock();
+  wireKeyboardLauncher(); // makes the "Keyboard" bar button actually work
 
   console.info('CRSWRD: Phase 2 UI loaded (static crossword, no generation).');
 }

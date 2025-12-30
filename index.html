@@ -145,9 +145,9 @@
             id="kbToggleBtn"
             class="btn-mini kb-toggle"
             type="button"
-            aria-pressed="false"
+            aria-label="Show keyboard input"
           >
-            Show keyboard
+            Keyboard
           </button>
 
           <input
@@ -158,91 +158,113 @@
             autocomplete="off"
             autocapitalize="characters"
             spellcheck="false"
-            aria-label="Crossword input"
+            aria-label="Keyboard input"
           />
         </div>
 
-        <div class="stage-top">
-          <!-- Touch devices: a way to bring the keyboard back without refreshing -->
-          <div class="keyboard-bar touch-only" aria-label="Keyboard controls">
-            <button
-              id="keyboardBtn"
-              class="btn-mini btn-keyboard"
-              type="button"
-            >
-              Keyboard
-            </button>
-            <span class="keyboard-hint">Tap to bring back the keyboard</span>
+        <!-- The stage card is the centered "play area" -->
+        <div class="stage-card">
+          <div class="stage-card-inner">
+            <div class="stage-top">
+              <!-- Touch devices: a way to bring the keyboard back without refreshing -->
+              <div
+                class="keyboard-bar touch-only"
+                aria-label="Keyboard controls"
+              >
+                <button
+                  id="keyboardBtn"
+                  class="btn-mini btn-keyboard"
+                  type="button"
+                >
+                  Keyboard
+                </button>
+                <span class="keyboard-hint"
+                  >Tap to bring back the keyboard</span
+                >
+              </div>
+
+              <div class="gameplay-controls" aria-label="Gameplay controls">
+                <div class="control-group">
+                  <button id="checkLetterBtn" class="btn-mini">
+                    Check Letter
+                  </button>
+                  <button id="checkWordBtn" class="btn-mini">Check Word</button>
+                  <button id="checkPuzzleBtn" class="btn-mini">
+                    Check Puzzle
+                  </button>
+                </div>
+
+                <div class="control-group">
+                  <button id="revealLetterBtn" class="btn-mini">
+                    Reveal Letter
+                  </button>
+                  <button id="revealWordBtn" class="btn-mini">
+                    Reveal Word
+                  </button>
+                  <button id="revealPuzzleBtn" class="btn-mini">
+                    Reveal Puzzle
+                  </button>
+                </div>
+
+                <div class="control-group control-group-end">
+                  <button id="resetPuzzleBtn" class="btn-mini">Reset</button>
+                  <button id="newPuzzleBtn" class="btn-mini">New Puzzle</button>
+                </div>
+
+                <span
+                  id="checkStatus"
+                  class="check-status"
+                  role="status"
+                  aria-live="polite"
+                ></span>
+              </div>
+            </div>
+
+            <div class="puzzle-layout" aria-label="Crossword puzzle">
+              <!-- Grid -->
+              <div class="puzzle-grid-wrap">
+                <div class="puzzle-bar" aria-label="Active selection">
+                  <span id="activeDir" class="pill" aria-live="polite"
+                    >Across</span
+                  >
+
+                  <span
+                    id="activeClue"
+                    class="puzzle-bar-text"
+                    aria-live="polite"
+                  >
+                    Click any white cell to start.
+                  </span>
+
+                  <span
+                    id="activeMeta"
+                    class="puzzle-bar-meta"
+                    aria-live="polite"
+                  ></span>
+                </div>
+
+                <div
+                  id="crossword"
+                  class="crossword"
+                  role="grid"
+                  aria-label="Crossword grid"
+                ></div>
+              </div>
+
+              <!-- Clues -->
+              <aside class="clues" aria-label="Clues">
+                <div class="clues-section" aria-label="Across clues">
+                  <h3 class="clues-title">Across</h3>
+                  <ol id="acrossClues" class="clue-list"></ol>
+                </div>
+
+                <div class="clues-section" aria-label="Down clues">
+                  <h3 class="clues-title">Down</h3>
+                  <ol id="downClues" class="clue-list"></ol>
+                </div>
+              </aside>
+            </div>
           </div>
-
-          <div class="gameplay-controls" aria-label="Gameplay controls">
-            <div class="control-group">
-              <button id="checkLetterBtn" class="btn-mini">Check Letter</button>
-              <button id="checkWordBtn" class="btn-mini">Check Word</button>
-              <button id="checkPuzzleBtn" class="btn-mini">Check Puzzle</button>
-            </div>
-
-            <div class="control-group">
-              <button id="revealLetterBtn" class="btn-mini">
-                Reveal Letter
-              </button>
-              <button id="revealWordBtn" class="btn-mini">Reveal Word</button>
-              <button id="revealPuzzleBtn" class="btn-mini">
-                Reveal Puzzle
-              </button>
-            </div>
-
-            <div class="control-group control-group-end">
-              <button id="resetPuzzleBtn" class="btn-mini">Reset</button>
-              <button id="newPuzzleBtn" class="btn-mini">New Puzzle</button>
-            </div>
-
-            <span
-              id="checkStatus"
-              class="check-status"
-              role="status"
-              aria-live="polite"
-            ></span>
-          </div>
-        </div>
-
-        <div class="puzzle-layout" aria-label="Crossword puzzle">
-          <!-- Grid -->
-          <div class="puzzle-grid-wrap">
-            <div class="puzzle-bar" aria-label="Active selection">
-              <span id="activeDir" class="pill" aria-live="polite">Across</span>
-
-              <span id="activeClue" class="puzzle-bar-text" aria-live="polite">
-                Click any white cell to start.
-              </span>
-
-              <span
-                id="activeMeta"
-                class="puzzle-bar-meta"
-                aria-live="polite"
-              ></span>
-            </div>
-
-            <div
-              id="crossword"
-              class="crossword"
-              role="grid"
-              aria-label="Crossword grid"
-            ></div>
-          </div>
-
-          <!-- Clues -->
-          <aside class="clues" aria-label="Clues">
-            <div class="clues-section" aria-label="Across clues">
-              <h3 class="clues-title">Across</h3>
-              <ol id="acrossClues" class="clue-list"></ol>
-            </div>
-
-            <div class="clues-section" aria-label="Down clues">
-              <h3 class="clues-title">Down</h3>
-              <ol id="downClues" class="clue-list"></ol>
-            </div>
-          </aside>
         </div>
       </section>
     </main>

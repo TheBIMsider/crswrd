@@ -275,9 +275,12 @@ select:focus {
 .stage {
   min-height: 340px;
 
-  /* Center the whole play card in the stage column */
+  /* Center the play card in the stage column */
   display: flex;
-  justify-content: center;
+  flex-direction: column; /* stack children, not side-by-side */
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
 }
 
 .stage-card {
@@ -686,6 +689,17 @@ body.has-touch .mobile-input {
 
 .mobile-only {
   display: none;
+}
+
+/* Hidden by default. Enabled via JS when touch-first is detected. */
+.touch-only {
+  display: none;
+}
+
+body.has-touch .touch-only {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 /* Collapsed state for config panel (mobile) */
