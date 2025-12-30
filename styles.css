@@ -592,31 +592,57 @@ select:focus {
   color: var(--text);
 }
 
-/* Mobile keyboard bridge input (hidden but focusable) */
+/* Mobile keyboard bridge input (hidden on all sizes) */
 .mobile-input {
   position: fixed;
-  left: 0;
+  left: -9999px;
   top: 0;
-
-  /* Keep it effectively invisible, but NOT "display:none" */
   width: 1px;
   height: 1px;
-  opacity: 0.01;
 
-  /* Critical: allow a real focus/click target for Chrome/Edge */
-  pointer-events: auto;
-
-  /* Keep it out of the way */
-  z-index: 9999;
-
-  /* Reduce any weird zoom/selection behavior */
-  font-size: 16px;
+  opacity: 0;
   border: 0;
   padding: 0;
   margin: 0;
+
   background: transparent;
   color: transparent;
   caret-color: transparent;
+
+  pointer-events: none;
+  outline: none;
+  z-index: -1;
+}
+
+/* Touch-only keyboard bar (helps when the OS keyboard hides) */
+.touch-only {
+  display: none;
+}
+
+@media (pointer: coarse) and (hover: none) {
+  .touch-only {
+    display: flex;
+  }
+}
+
+.keyboard-bar {
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.keyboard-hint {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.2;
+}
+
+.btn-keyboard {
+  font-weight: 800;
 }
 
 /* Stack clues under the grid on smaller screens */

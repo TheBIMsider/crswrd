@@ -25,15 +25,24 @@ function focusMobileInput() {
   const input = $('mobileInput');
   if (!input) return;
 
-  if (document.activeElement === input) return;
-
   const x = window.scrollX;
   const y = window.scrollY;
 
+  // On some Chromium tablets, focusing the same element is ignored.
+  // We still try to "poke" it so the OS keyboard has a reason to appear.
   try {
     input.focus({ preventScroll: true });
   } catch {
     input.focus();
+  }
+
+  // Ensure a caret/selection exists (some devices won't show a keyboard otherwise).
+  // Keep it empty so we don't leak characters into the game.
+  try {
+    input.value = '';
+    input.setSelectionRange(0, 0);
+  } catch {
+    // setSelectionRange can fail on some older browsers. Safe to ignore.
   }
 
   requestAnimationFrame(() => window.scrollTo(x, y));
@@ -354,6 +363,7 @@ function init() {
   initCrosswordFromSelections();
   wireCheckButtons();
   wireMobileKeyboard();
+  wireKeyboardLauncher();
 
   console.info('CRSWRD: Phase 2 UI loaded (static crossword, no generation).');
 }
@@ -6997,6 +7007,21 @@ function wireMobileKeyboard() {
     // Otherwise, keep the keyboard alive.
     // Use rAF instead of timers to avoid focus thrash during tap transitions.
     requestAnimationFrame(() => focusMobileInput());
+  });
+}
+
+function wireKeyboardLauncher() {
+  const btn = $('keyboardBtn');
+  if (!btn) return;
+
+  // pointerdown helps avoid a blur/focus tug-of-war on touch devices
+  btn.addEventListener('pointerdown', (e) => {
+    e.preventDefault();
+    focusMobileInput();
+  });
+
+  btn.addEventListener('click', () => {
+    focusMobileInput();
   });
 }
 
