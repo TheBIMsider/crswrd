@@ -113,17 +113,21 @@ function updateThemeToggleLabel(theme) {
 
   const isDark = theme === 'dark';
 
-  // Show the *action*, not the current state
-  // Dark mode  -> offer Light
-  // Light mode -> offer Dark
-  btn.textContent = isDark ? '☀️ Light' : '🌙 Dark';
+  // Show the CURRENT state (what you're in right now)
+  btn.textContent = isDark ? '🌙 Dark' : '☀️ Light';
 
+  // Keep aria-pressed tied to "dark mode is on"
   btn.setAttribute('aria-pressed', String(isDark));
+
+  // Tooltip still explains the action
   btn.title = `Switch to ${isDark ? 'Light' : 'Dark'} mode`;
 }
 
 function applyTheme(theme) {
-  document.documentElement.dataset.theme = theme;
+  // Use data-theme so CSS can switch tokens cleanly
+  document.documentElement.setAttribute('data-theme', theme);
+
+  // Keep the header button synced (icon + current theme name)
   updateThemeToggleLabel(theme);
 }
 
@@ -131,6 +135,7 @@ function initTheme() {
   const stored = getStoredTheme();
   const initial = stored || getSystemTheme();
   applyTheme(initial);
+  updateThemeToggleLabel(initial);
 
   // If user has NOT explicitly chosen a theme, follow system changes.
   if (!stored) {
