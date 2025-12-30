@@ -161,7 +161,9 @@ a {
   display: grid;
   grid-template-columns: 1.15fr 0.85fr;
   gap: 14px;
-  align-items: start;
+
+  /* Make both columns equal height */
+  align-items: stretch;
 }
 
 .hero-card,
@@ -239,11 +241,18 @@ h1 {
 /* Screenshot */
 .shot-card {
   padding: 12px;
+
+  /* Fill the hero column height */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .shot {
   width: 100%;
-  height: auto;
+  max-height: 100%;
+  object-fit: contain;
+
   border-radius: 14px;
   border: 1px solid var(--border);
   background: var(--surface-2);

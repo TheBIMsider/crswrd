@@ -23,11 +23,31 @@
   function setTheme(theme) {
     html.setAttribute('data-theme', theme);
     localStorage.setItem(STORAGE_KEY, theme);
+
+    // Update button text
     btn.textContent = theme === 'light' ? 'Theme: Light' : 'Theme: Dark';
     btn.setAttribute(
       'aria-label',
       theme === 'light' ? 'Switch to dark theme' : 'Switch to light theme'
     );
+
+    // Swap logo
+    const logo = document.getElementById('landingLogo');
+    if (logo) {
+      logo.src =
+        theme === 'light'
+          ? './CRSWRD_Logo_Light_02.png'
+          : './CRSWRD_Logo_Dark_02.png';
+    }
+
+    // Swap hero screenshot
+    const shot = document.getElementById('heroShot');
+    if (shot) {
+      shot.src =
+        theme === 'light'
+          ? './images/crswrd-hero-light.png'
+          : './images/crswrd-hero-dark.png';
+    }
   }
 
   function toggleTheme() {
