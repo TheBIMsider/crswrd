@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CRSWRD | Build it. Solve it.</title>
+    <meta
+      name="description"
+      content="CRSWRD is a lightweight, browser-based crossword generator and solver. No accounts. No installs. Just puzzles."
+    />
+
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header">
+      <div class="wrap header-inner">
+        <a class="brand" href="../" aria-label="Open CRSWRD app">
+          <img
+            class="brand-logo"
+            src="https://github.com/user-attachments/assets/d8f1cb9a-5210-4731-adaf-2b499d34c1c3"
+            alt="CRSWRD logo"
+            width="160"
+            height="60"
+            loading="eager"
+          />
+        </a>
+
+        <nav class="header-actions" aria-label="Primary">
+          <a class="btn btn-ghost" href="../">Play</a>
+          <a class="btn btn-ghost" href="../#top">App settings</a>
+
+          <button
+            id="themeToggle"
+            class="btn btn-ghost"
+            type="button"
+            aria-label="Toggle theme"
+            title="Toggle theme"
+          >
+            Theme
+          </button>
+
+          <a
+            class="btn btn-ghost"
+            href="https://github.com/thebimsider/crswrd"
+            target="_blank"
+            rel="noreferrer"
+            >GitHub</a
+          >
+        </nav>
+      </div>
+    </header>
+
+    <main id="main" class="wrap">
+      <section class="hero">
+        <div class="hero-card">
+          <p class="pill">CRSWRD</p>
+          <h1>Build it. Solve it.</h1>
+          <p class="lead">
+            A lightweight crossword generator and solver that runs entirely in
+            your browser. Pick your settings, generate a fresh puzzle, start
+            typing.
+          </p>
+
+          <div class="cta-row">
+            <a class="btn btn-primary" href="../">Play CRSWRD</a>
+            <a
+              class="btn btn-secondary"
+              href="https://github.com/thebimsider/crswrd"
+              target="_blank"
+              rel="noreferrer"
+            >
+              View repo
+            </a>
+          </div>
+
+          <div class="hero-meta">
+            <div class="meta-item">
+              <div class="meta-title">No accounts</div>
+              <div class="meta-sub">No logins, no tracking, no drama</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-title">Client-side</div>
+              <div class="meta-sub">Runs fully in the browser</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-title">Replayable</div>
+              <div class="meta-sub">Generate as many puzzles as you want</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="shot-card" aria-label="CRSWRD screenshot">
+          <img
+            class="shot"
+            src="https://github.com/user-attachments/assets/5bf80851-37d5-436c-8fe4-b34bfd64a125"
+            alt="CRSWRD in action, a puzzle mid-solve"
+            loading="lazy"
+          />
+          <div class="shot-caption">CRSWRD in action, mid-solve</div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>How it works</h2>
+
+        <ol class="steps">
+          <li>
+            <span class="step-num">1</span>Choose your settings (difficulty,
+            pack, tone, grid size).
+          </li>
+          <li>
+            <span class="step-num">2</span>Click
+            <strong>Generate Puzzle</strong>.
+          </li>
+          <li>
+            <span class="step-num">3</span>Click a white cell and start typing.
+          </li>
+          <li>
+            <span class="step-num">4</span>Use arrow keys to move, click again
+            to switch Across / Down.
+          </li>
+          <li>
+            <span class="step-num">5</span>Use the toolbar to check or reveal
+            when you’re stuck.
+          </li>
+        </ol>
+
+        <div class="callout">
+          Tip: “Everything” mode mixes words from all installed packs for
+          maximum chaos in a good way.
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Word packs</h2>
+        <p class="muted">
+          10 curated packs (100 words each), plus an Everything mode that mixes
+          across all packs.
+        </p>
+
+        <div class="grid">
+          <div class="card">General</div>
+          <div class="card">Movies</div>
+          <div class="card">Sports</div>
+          <div class="card">Holidays</div>
+          <div class="card">Animals</div>
+          <div class="card">Music</div>
+          <div class="card">Transportation</div>
+          <div class="card">The 80's</div>
+          <div class="card">The 90's</div>
+          <div class="card">World Events</div>
+          <div class="card card-accent">Everything</div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>Known limitations</h2>
+        <ul class="bullets">
+          <li>Puzzle difficulty can vary due to random generation.</li>
+          <li>No puzzle saving or resume yet.</li>
+          <li>No zoom or pan for large grids (planned).</li>
+          <li>Mobile works, but desktop is the smoothest experience.</li>
+        </ul>
+      </section>
+
+      <section class="section final-cta">
+        <div class="final-cta-card">
+          <h2>Ready to get stuck on 3-Down?</h2>
+          <p class="muted">That’s the spirit.</p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="../">Play now</a>
+            <a
+              class="btn btn-secondary"
+              href="https://github.com/thebimsider/crswrd/issues"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Report an issue
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <div class="footer-inner">
+          <span>© CRSWRD</span>
+          <span class="dot">•</span>
+          <a
+            href="https://github.com/thebimsider/crswrd"
+            target="_blank"
+            rel="noreferrer"
+            >GitHub</a
+          >
+          <span class="dot">•</span>
+          <a href="../">Play</a>
+        </div>
+      </footer>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
