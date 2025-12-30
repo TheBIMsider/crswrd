@@ -642,32 +642,25 @@ body.has-touch {
   padding-bottom: 86px;
 }
 
-/* The input becomes real and tappable on touch devices */
+/* The input must exist for Android Chrome to show the on-screen keyboard.
+   Keep it technically visible, but effectively invisible and non-interactive. */
 body.has-touch .mobile-input {
-  position: static;
-  left: auto;
-  top: auto;
+  position: fixed;
+  left: 12px;
+  bottom: 12px;
 
-  width: 160px;
-  height: 34px;
+  width: 1px;
+  height: 1px;
 
-  opacity: 1;
-  pointer-events: auto;
+  opacity: 0.02; /* not 0, so Chromium still treats it as visible */
+  pointer-events: none;
 
-  border-radius: 10px;
-  border: 1px solid var(--control-border);
-  background: var(--control-bg);
-  color: var(--text);
+  border: 0;
+  background: transparent;
+  color: transparent;
 
-  padding: 6px 10px;
+  padding: 0;
   outline: none;
-}
-
-/* Optional: slightly wider input on larger tablets */
-@media (min-width: 700px) {
-  body.has-touch .mobile-input {
-    width: 220px;
-  }
 }
 
 .kb-toggle {

@@ -8,11 +8,19 @@ let CURRENT = null;
 let MOBILE_INPUT = null;
 
 function isTouchLikely() {
-  // "Touch-first" device detection
-  // Avoid treating desktop/laptop (even with touchscreen) as mobile.
-  const coarse = window.matchMedia('(pointer: coarse)').matches;
-  const noHover = window.matchMedia('(hover: none)').matches;
-  return coarse && noHover;
+  // Touch-capable detection that works on Android tablets in Chromium browsers.
+  // We also gate by screen width to avoid enabling on typical desktops.
+  const maxTouchPoints = navigator.maxTouchPoints || 0;
+
+  const coarse = window.matchMedia?.('(pointer: coarse)')?.matches ?? false;
+  const noHover = window.matchMedia?.('(hover: none)')?.matches ?? false;
+
+  // Tablet/phone-ish screen gate (keeps desktop stable)
+  const smallishScreen =
+    window.matchMedia?.('(max-width: 1100px)')?.matches ?? false;
+
+  // If device can touch and the screen is in the mobile/tablet range, treat as touch UI.
+  return smallishScreen && (maxTouchPoints > 0 || coarse || noHover);
 }
 
 function getMobileInput() {
@@ -337,6 +345,10 @@ function init() {
 
   // Mark touch-first devices so CSS can enable the keyboard dock.
   document.body.classList.toggle('has-touch', isTouchLikely());
+  // Keep touch mode correct on rotate / resize (tablets love to change their mind)
+  window.addEventListener('resize', () => {
+    document.body.classList.toggle('has-touch', isTouchLikely());
+  });
 
   const form = $('configForm');
 
