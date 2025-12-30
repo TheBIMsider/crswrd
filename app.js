@@ -29,14 +29,6 @@ function getMobileInput() {
   return MOBILE_INPUT;
 }
 
-function setKeyboardDockOpen(isOpen) {
-  const btn = $('kbToggleBtn');
-  if (btn) {
-    btn.setAttribute('aria-pressed', String(isOpen));
-    btn.textContent = isOpen ? 'Hide keyboard' : 'Show keyboard';
-  }
-}
-
 function focusMobileInput() {
   const input = $('mobileInput');
   if (!input) return;
@@ -61,23 +53,8 @@ function focusMobileInput() {
     // Some browsers may not allow this in all cases, safe to ignore.
   }
 
-  setKeyboardDockOpen(true);
-
   // Do not jump the page around when keyboard opens
   requestAnimationFrame(() => window.scrollTo(x, y));
-}
-
-function blurMobileInput() {
-  const input = $('mobileInput');
-  if (!input) return;
-  if (document.activeElement !== input) return;
-
-  try {
-    input.blur();
-  } catch {
-    // ignore
-  }
-  setKeyboardDockOpen(false);
 }
 
 let MOBILE_FOCUS_LOCK_UNTIL = 0;
@@ -99,31 +76,6 @@ function isInteractiveControl(el) {
     return true;
   }
   return Boolean(el.closest && el.closest('#configForm'));
-}
-
-function wireKeyboardDock() {
-  const btn = $('kbToggleBtn');
-  const input = $('mobileInput');
-  if (!btn || !input) return;
-
-  // Start label state
-  setKeyboardDockOpen(document.activeElement === input);
-
-  btn.addEventListener('click', () => {
-    if (!isTouchLikely()) return;
-
-    if (document.activeElement === input) {
-      blurMobileInput();
-      return;
-    }
-
-    // User gesture: focus should open the keyboard
-    focusMobileInput();
-  });
-
-  // Keep button label in sync even if user taps directly into the input
-  input.addEventListener('focus', () => setKeyboardDockOpen(true));
-  input.addEventListener('blur', () => setKeyboardDockOpen(false));
 }
 
 function shouldAutoRefocusMobileInput() {
@@ -427,7 +379,6 @@ function init() {
   initCrosswordFromSelections();
   wireCheckButtons();
   wireMobileKeyboard();
-  wireKeyboardDock();
   wireKeyboardLauncher(); // makes the "Keyboard" bar button actually work
 
   console.info('CRSWRD: Phase 2 UI loaded (static crossword, no generation).');

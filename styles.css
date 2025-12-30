@@ -596,63 +596,20 @@ select:focus {
 }
 
 /* ─────────────────────────────────────────────
-   Mobile keyboard dock
-   - Desktop: no impact (hidden)
-   - Touch devices: fixed dock at bottom with a real input
+   Mobile keyboard bridge input
+   Android Chromium often requires a visible (not display:none) input to open the OSK.
+   We keep this effectively invisible and out of the way.
    ───────────────────────────────────────────── */
 
-/* Default: hidden (no layout impact anywhere) */
-.kb-dock {
-  display: none;
-}
-
-/* Default: keep input inert if dock is hidden */
 .mobile-input {
   position: fixed;
-  left: -9999px;
-  top: 0;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Touch devices only (JS adds body.has-touch) */
-body.has-touch .kb-dock {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-
-  position: fixed;
-  left: 12px;
-  right: 12px;
-  bottom: 12px;
-
-  padding: 10px 12px;
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  background: var(--surface);
-  box-shadow: var(--shadow);
-
-  z-index: 1000;
-}
-
-/* Make room so the dock doesn't cover the bottom UI */
-body.has-touch {
-  padding-bottom: 86px;
-}
-
-/* The input must exist for Android Chrome to show the on-screen keyboard.
-   Keep it technically visible, but effectively invisible and non-interactive. */
-body.has-touch .mobile-input {
-  position: fixed;
   left: 12px;
   bottom: 12px;
 
   width: 1px;
   height: 1px;
 
-  opacity: 0.02; /* not 0, so Chromium still treats it as visible */
+  opacity: 0.02; /* not 0: Chromium may ignore a fully hidden input */
   pointer-events: none;
 
   border: 0;
@@ -663,8 +620,12 @@ body.has-touch .mobile-input {
   outline: none;
 }
 
-.kb-toggle {
-  white-space: nowrap;
+/* Desktop: don’t let this steal focus or show any caret artifacts */
+body:not(.has-touch) .mobile-input {
+  left: -9999px;
+  bottom: auto;
+  top: 0;
+  opacity: 0;
 }
 
 /* Stack clues under the grid on smaller screens */

@@ -139,28 +139,18 @@
           Puzzle settings
         </button>
 
-        <!-- Mobile keyboard dock (touch devices only) -->
-        <div id="kbDock" class="kb-dock" aria-label="Keyboard controls">
-          <button
-            id="kbToggleBtn"
-            class="btn-mini kb-toggle"
-            type="button"
-            aria-label="Show keyboard input"
-          >
-            Keyboard
-          </button>
-
-          <input
-            id="mobileInput"
-            class="mobile-input"
-            type="text"
-            inputmode="text"
-            autocomplete="off"
-            autocapitalize="characters"
-            spellcheck="false"
-            aria-label="Keyboard input"
-          />
-        </div>
+        <!-- Hidden input used to trigger the on-screen keyboard on Android tablets.
+              Keep it near the keyboard button so the intent is obvious. -->
+        <input
+          id="mobileInput"
+          class="mobile-input"
+          type="text"
+          inputmode="text"
+          autocomplete="off"
+          autocapitalize="characters"
+          spellcheck="false"
+          aria-label="Crossword input"
+        />
 
         <!-- The stage card is the centered "play area" -->
         <div class="stage-card">
