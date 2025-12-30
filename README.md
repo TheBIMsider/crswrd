@@ -13,7 +13,7 @@
 CRSWRD is a lightweight, browser-based crossword generator and solver.
 You choose the difficulty, theme, tone, and grid size. CRSWRD builds the puzzle. You solve it.
 
-No accounts. No installs. Just puzzles. 
+No accounts. No installs. Just puzzles.
 
 Learn more here: 👉 https://thebimsider.github.io/crswrd/landing/
 
@@ -59,7 +59,7 @@ _CRSWRD in action — a puzzle mid-solve._
 
 - Not a daily crossword
 - Not competitive or scored
-- No puzzle saving or history (yet)
+- No puzzle saving or resume (yet) — preferences are remembered, puzzles are not
 - No guarantee every generated puzzle is perfectly balanced (beta behavior)
 
 ---

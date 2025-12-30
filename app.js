@@ -156,6 +156,94 @@ function initTheme() {
   });
 }
 
+// -----------------------------
+// Preferences (Pack / Tone / Grid size)
+// -----------------------------
+const PREFS_STORAGE_KEY = 'crswrd_prefs_v1';
+
+/**
+ * Safe read of stored preferences.
+ * Returns null if blocked/unavailable/corrupt.
+ */
+function getStoredPrefs() {
+  try {
+    const raw = localStorage.getItem(PREFS_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return parsed && typeof parsed === 'object' ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Safe write of preferences. Silently no-ops if storage is blocked.
+ */
+function setStoredPrefs(prefs) {
+  try {
+    localStorage.setItem(PREFS_STORAGE_KEY, JSON.stringify(prefs));
+  } catch {
+    // Storage might be blocked (private mode, strict settings, etc).
+    // App still works without persistence.
+  }
+}
+
+/**
+ * Only set a <select> value if that option exists (prevents stale values).
+ */
+function setSelectIfValid(selectId, value) {
+  const el = $(selectId);
+  if (!el || typeof value !== 'string' || !value) return;
+
+  const hasOption = Array.from(el.options).some((o) => o.value === value);
+  if (hasOption) el.value = value;
+}
+
+/**
+ * Read the current UI selections we care about for persistence.
+ */
+function readPrefsFromUI() {
+  return {
+    difficulty: $('difficulty')?.value || 'medium',
+    pack: $('pack')?.value || 'general',
+    tone: $('tone')?.value || 'serious',
+    timeLength: $('timeLength')?.value || 'medium',
+  };
+}
+
+/**
+ * Apply stored preferences to the UI (if present and valid).
+ */
+function applyStoredPrefsToUI() {
+  const prefs = getStoredPrefs();
+  if (!prefs) return;
+
+  setSelectIfValid('difficulty', prefs.difficulty);
+  setSelectIfValid('pack', prefs.pack);
+  setSelectIfValid('tone', prefs.tone);
+  setSelectIfValid('timeLength', prefs.timeLength);
+}
+
+/**
+ * Save current UI selections immediately.
+ */
+function persistPrefsFromUI() {
+  setStoredPrefs(readPrefsFromUI());
+}
+
+/**
+ * Wire dropdown changes so updates are persisted as soon as the user changes them.
+ */
+function wirePrefsPersistence() {
+  const ids = ['difficulty', 'pack', 'tone', 'timeLength'];
+
+  ids.forEach((id) => {
+    const el = $(id);
+    if (!el) return;
+    el.addEventListener('change', persistPrefsFromUI);
+  });
+}
+
 function readConfig() {
   return {
     difficulty: $('difficulty').value,
@@ -196,6 +284,12 @@ function init() {
     return;
   }
 
+  // 1) Restore saved preferences before we generate anything.
+  applyStoredPrefsToUI();
+
+  // 2) Persist any changes as the user tweaks dropdowns.
+  wirePrefsPersistence();
+
   // Mobile: allow settings controls (dropdowns) to open without us stealing focus back.
   form.addEventListener('pointerdown', () => suppressMobileRefocus(1200), true);
 
@@ -217,6 +311,10 @@ function init() {
 
     const config = readConfig();
     logConfig(config);
+
+    // Save selections even if the user didn't touch the dropdowns this time.
+    persistPrefsFromUI();
+
     // Phase 3: Load puzzle from selected pack (data-driven)
     initCrosswordFromSelections();
 
