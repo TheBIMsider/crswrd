@@ -592,57 +592,83 @@ select:focus {
   color: var(--text);
 }
 
-/* Mobile keyboard bridge input (hidden on all sizes) */
+/* ─────────────────────────────────────────────
+   Mobile keyboard dock
+   - Desktop: no impact (hidden)
+   - Touch devices: fixed dock at bottom with a real input
+   ───────────────────────────────────────────── */
+
+/* Default: hidden (no layout impact anywhere) */
+.kb-dock {
+  display: none;
+}
+
+/* Default: keep input inert if dock is hidden */
 .mobile-input {
   position: fixed;
   left: -9999px;
   top: 0;
   width: 1px;
   height: 1px;
-
   opacity: 0;
-  border: 0;
-  padding: 0;
-  margin: 0;
-
-  background: transparent;
-  color: transparent;
-  caret-color: transparent;
-
   pointer-events: none;
+}
+
+/* Touch devices only (JS adds body.has-touch) */
+body.has-touch .kb-dock {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+
+  position: fixed;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  box-shadow: var(--shadow);
+
+  z-index: 1000;
+}
+
+/* Make room so the dock doesn't cover the bottom UI */
+body.has-touch {
+  padding-bottom: 86px;
+}
+
+/* The input becomes real and tappable on touch devices */
+body.has-touch .mobile-input {
+  position: static;
+  left: auto;
+  top: auto;
+
+  width: 160px;
+  height: 34px;
+
+  opacity: 1;
+  pointer-events: auto;
+
+  border-radius: 10px;
+  border: 1px solid var(--control-border);
+  background: var(--control-bg);
+  color: var(--text);
+
+  padding: 6px 10px;
   outline: none;
-  z-index: -1;
 }
 
-/* Touch-only keyboard bar (helps when the OS keyboard hides) */
-.touch-only {
-  display: none;
-}
-
-@media (pointer: coarse) and (hover: none) {
-  .touch-only {
-    display: flex;
+/* Optional: slightly wider input on larger tablets */
+@media (min-width: 700px) {
+  body.has-touch .mobile-input {
+    width: 220px;
   }
 }
 
-.keyboard-bar {
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 8px;
-  padding: 8px 10px;
-  border-radius: 12px;
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.06);
-}
-
-.keyboard-hint {
-  font-size: 12px;
-  color: var(--muted);
-  line-height: 1.2;
-}
-
-.btn-keyboard {
-  font-weight: 800;
+.kb-toggle {
+  white-space: nowrap;
 }
 
 /* Stack clues under the grid on smaller screens */

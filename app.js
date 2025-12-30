@@ -21,31 +21,55 @@ function getMobileInput() {
   return MOBILE_INPUT;
 }
 
+function setKeyboardDockOpen(isOpen) {
+  const btn = $('kbToggleBtn');
+  if (btn) {
+    btn.setAttribute('aria-pressed', String(isOpen));
+    btn.textContent = isOpen ? 'Hide keyboard' : 'Show keyboard';
+  }
+}
+
 function focusMobileInput() {
   const input = $('mobileInput');
   if (!input) return;
 
+  // Touch only
+  if (!isTouchLikely()) return;
+
   const x = window.scrollX;
   const y = window.scrollY;
 
-  // On some Chromium tablets, focusing the same element is ignored.
-  // We still try to "poke" it so the OS keyboard has a reason to appear.
   try {
     input.focus({ preventScroll: true });
   } catch {
     input.focus();
   }
 
-  // Ensure a caret/selection exists (some devices won't show a keyboard otherwise).
-  // Keep it empty so we don't leak characters into the game.
+  // Put caret at end so typing feels normal
   try {
-    input.value = '';
-    input.setSelectionRange(0, 0);
+    const v = input.value || '';
+    input.setSelectionRange(v.length, v.length);
   } catch {
-    // setSelectionRange can fail on some older browsers. Safe to ignore.
+    // Some browsers may not allow this in all cases, safe to ignore.
   }
 
+  setKeyboardDockOpen(true);
+
+  // Do not jump the page around when keyboard opens
   requestAnimationFrame(() => window.scrollTo(x, y));
+}
+
+function blurMobileInput() {
+  const input = $('mobileInput');
+  if (!input) return;
+  if (document.activeElement !== input) return;
+
+  try {
+    input.blur();
+  } catch {
+    // ignore
+  }
+  setKeyboardDockOpen(false);
 }
 
 let MOBILE_FOCUS_LOCK_UNTIL = 0;
@@ -67,6 +91,31 @@ function isInteractiveControl(el) {
     return true;
   }
   return Boolean(el.closest && el.closest('#configForm'));
+}
+
+function wireKeyboardDock() {
+  const btn = $('kbToggleBtn');
+  const input = $('mobileInput');
+  if (!btn || !input) return;
+
+  // Start label state
+  setKeyboardDockOpen(document.activeElement === input);
+
+  btn.addEventListener('click', () => {
+    if (!isTouchLikely()) return;
+
+    if (document.activeElement === input) {
+      blurMobileInput();
+      return;
+    }
+
+    // User gesture: focus should open the keyboard
+    focusMobileInput();
+  });
+
+  // Keep button label in sync even if user taps directly into the input
+  input.addEventListener('focus', () => setKeyboardDockOpen(true));
+  input.addEventListener('blur', () => setKeyboardDockOpen(false));
 }
 
 function shouldAutoRefocusMobileInput() {
@@ -286,6 +335,9 @@ function collapseConfigPanel(shouldCollapse) {
 function init() {
   initTheme();
 
+  // Mark touch-first devices so CSS can enable the keyboard dock.
+  document.body.classList.toggle('has-touch', isTouchLikely());
+
   const form = $('configForm');
 
   if (!form) {
@@ -363,7 +415,7 @@ function init() {
   initCrosswordFromSelections();
   wireCheckButtons();
   wireMobileKeyboard();
-  wireKeyboardLauncher();
+  wireKeyboardDock();
 
   console.info('CRSWRD: Phase 2 UI loaded (static crossword, no generation).');
 }

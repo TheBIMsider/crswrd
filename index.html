@@ -139,16 +139,28 @@
           Puzzle settings
         </button>
 
-        <input
-          id="mobileInput"
-          class="mobile-input"
-          type="text"
-          inputmode="text"
-          autocomplete="off"
-          autocapitalize="characters"
-          spellcheck="false"
-          aria-label="Crossword input"
-        />
+        <!-- Mobile keyboard dock (touch devices only) -->
+        <div id="kbDock" class="kb-dock" aria-label="Keyboard controls">
+          <button
+            id="kbToggleBtn"
+            class="btn-mini kb-toggle"
+            type="button"
+            aria-pressed="false"
+          >
+            Show keyboard
+          </button>
+
+          <input
+            id="mobileInput"
+            class="mobile-input"
+            type="text"
+            inputmode="text"
+            autocomplete="off"
+            autocapitalize="characters"
+            spellcheck="false"
+            aria-label="Crossword input"
+          />
+        </div>
 
         <div class="stage-top">
           <!-- Touch devices: a way to bring the keyboard back without refreshing -->
