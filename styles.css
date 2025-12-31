@@ -225,6 +225,17 @@ select:focus {
   transform: translateY(1px);
 }
 
+.btn-secondary {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 600;
+}
+
 /* Screen-reader only utility */
 .sr-only {
   position: absolute;
@@ -547,6 +558,18 @@ body.mobile-typing .cell.active .val:empty::after {
   font-size: 12px;
 }
 
+/* Secondary button base style (used for Puzzle settings button on touch devices too) */
+.btn-secondary {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--text);
+  font-weight: 800;
+  cursor: pointer;
+}
+
 .check-status.is-win {
   font-weight: 800;
   color: var(--text);
@@ -682,13 +705,6 @@ body:not(.has-touch) .mobile-input {
   opacity: 0;
 }
 
-/* Stack clues under the grid on smaller screens */
-@media (max-width: 900px) {
-  .puzzle-layout {
-    grid-template-columns: 1fr;
-  }
-}
-
 .site-footer {
   padding: 0 0 22px;
   color: var(--muted);
@@ -713,14 +729,6 @@ body.has-touch .touch-only {
 /* Collapsed state for config panel (mobile) */
 .panel.is-collapsed {
   display: none;
-}
-
-/* Responsive behavior
-   The goal: comfortable on phones, still nice on desktop. */
-@media (max-width: 900px) {
-  .layout {
-    grid-template-columns: 1fr;
-  }
 }
 
 /* Phone + tablet comfort */
@@ -776,17 +784,6 @@ body.has-touch .touch-only {
   .btn-primary {
     padding: 13px 12px;
     font-size: 16px;
-  }
-
-  .btn-secondary {
-    width: 100%;
-    padding: 10px 12px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    background: rgba(255, 255, 255, 0.06);
-    color: var(--text);
-    cursor: pointer;
-    font-weight: 600;
   }
 
   .stage-card {
