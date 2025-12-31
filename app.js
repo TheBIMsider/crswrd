@@ -465,7 +465,7 @@ const PACKS = {
       {
         word: 'EKE',
         serious: '___ out a living',
-        funny: 'Barely making it work',
+        funny: 'What you might say when you see a mouse',
       },
       {
         word: 'AGE',
@@ -474,8 +474,8 @@ const PACKS = {
       },
       {
         word: 'ASP',
-        serious: 'Egyptian snake',
-        funny: 'Danger noodle, ancient edition',
+        serious: 'Venomous snake',
+        funny: 'Spicy rope with fangs',
       },
       { word: 'ICY', serious: 'Slippery or cold', funny: 'Cold with attitude' },
       {
@@ -485,7 +485,7 @@ const PACKS = {
       },
       { word: 'USE', serious: 'To employ', funny: 'Put it to work' },
       { word: 'ODD', serious: 'Not even', funny: 'Math’s rebel' },
-      { word: 'OLD', serious: 'Ancient', funny: 'Vintage, but tired' },
+      { word: 'OLD', serious: 'Not new', funny: 'Vintage, but tired' },
       { word: 'ANY', serious: 'Whichever one', funny: 'Dealer’s choice' },
       { word: 'OWN', serious: 'To possess', funny: 'Mine, officially' },
       {
@@ -546,7 +546,7 @@ const PACKS = {
       {
         word: 'ICON',
         serious: 'Symbol on a screen',
-        funny: 'Tiny picture with big responsibility',
+        funny: 'Small picture, big job',
       },
       { word: 'EXIT', serious: 'Way out', funny: 'The escape hatch' },
       { word: 'OMIT', serious: 'To leave out', funny: 'Delete with manners' },
@@ -566,7 +566,7 @@ const PACKS = {
         funny: 'One piece of the puzzle',
       },
       { word: 'SOLO', serious: 'By oneself', funny: 'Party of one' },
-      { word: 'ORAL', serious: 'Spoken', funny: 'Said out loud' },
+      { word: 'ORAL', serious: 'Spoken aloud', funny: 'Said out loud' },
       { word: 'OPEN', serious: 'Not closed', funny: 'Unlocked vibes' },
       {
         word: 'USER',
@@ -889,11 +889,11 @@ const PACKS = {
         serious: 'Camera glass',
         funny: 'Very expensive eyeball',
       },
-      { word: 'EPIC', serious: 'Grand-scale movie', funny: 'Long and loud' },
+      { word: 'EPIC', serious: 'Grand-scale film', funny: 'Long and loud' },
       {
         word: 'NOIR',
         serious: 'Dark film genre',
-        funny: 'Lights turned down, vibes turned up',
+        funny: 'Dark looks, moody vibes',
       },
       {
         word: 'CREW',
@@ -935,7 +935,7 @@ const PACKS = {
       {
         word: 'CULT',
         serious: '___ classic',
-        funny: 'Loved by exactly everyone online',
+        funny: 'Beloved by a devoted few',
       },
       {
         word: 'SLOT',
@@ -986,7 +986,7 @@ const PACKS = {
       },
       {
         word: 'AUDIO',
-        serious: 'Sound track',
+        serious: 'Film sound',
         funny: 'The part you notice when it’s bad',
       },
       { word: 'MOVIE', serious: 'The flick', funny: 'Two hours of commitment' },
@@ -1145,7 +1145,11 @@ const PACKS = {
         serious: 'On-screen text',
         funny: 'Reading while watching',
       },
-      { word: 'BLOCKBUSTER', serious: 'Major hit', funny: 'Budget goes brrrr' },
+      {
+        word: 'BLOCKBUSTER',
+        serious: 'Major hit',
+        funny: 'Big money, big noise',
+      },
       {
         word: 'SCREENPLAY',
         serious: 'Film script',
@@ -1154,7 +1158,7 @@ const PACKS = {
       {
         word: 'TECHNICOLOR',
         serious: 'Early color film process',
-        funny: 'Vintage saturation',
+        funny: 'Old-school color wizardry',
       },
       {
         word: 'DOCUMENTARY',
@@ -1236,13 +1240,13 @@ const PACKS = {
       },
       {
         word: 'ALT',
-        serious: 'Prefix for a high rock genre',
+        serious: 'Prefix for a rock genre',
         funny: 'The key next to "Control" and "Delete"',
       },
       {
         word: 'BAR',
         serious: 'A measure in music',
-        funny: 'The only place a musician can find a drink',
+        funny: 'Where music is measured, not poured',
       },
       {
         word: 'KEY',
@@ -1257,7 +1261,7 @@ const PACKS = {
       {
         word: 'SAX',
         serious: 'Jazz wind instrument',
-        funny: "Bill Clinton's favorite brassy woodwind",
+        funny: 'Jazz instrument with main-character energy',
       },
 
       {
@@ -1278,7 +1282,7 @@ const PACKS = {
       {
         word: 'CLEF',
         serious: 'Musical notation symbol',
-        funny: 'A "Treble" maker\'s favorite sign',
+        funny: 'The symbol that tells notes where to live',
       },
       {
         word: 'DUET',
@@ -1348,7 +1352,7 @@ const PACKS = {
       {
         word: 'SOLO',
         serious: 'Performance for one',
-        funny: 'Han’s favorite way to play music?',
+        funny: 'All eyes, one performer',
       },
       {
         word: 'SONG',
@@ -1363,7 +1367,7 @@ const PACKS = {
       {
         word: 'TUNE',
         serious: 'Melody or pitch',
-        funny: 'Something you can carry in a bucket',
+        funny: 'Something not everyone can carry',
       },
       {
         word: 'BRASS',
@@ -1519,7 +1523,7 @@ const PACKS = {
       {
         word: 'MODERN',
         serious: 'Contemporary era',
-        funny: 'Music that sounds like a printer dying',
+        funny: "Not your dad's music (probably)",
       },
       {
         word: 'PLAYER',
@@ -1568,7 +1572,7 @@ const PACKS = {
       },
       {
         word: 'THRILL',
-        serious: 'Musical trill (variation)',
+        serious: 'Ornamental musical flourish',
         funny: 'What a great solo gives the audience',
       },
       {
@@ -1610,7 +1614,7 @@ const PACKS = {
       {
         word: 'COUNTRY',
         serious: 'Genre of trucks and dogs',
-        funny: 'Music that’s 10% talent and 90% heartbreak',
+        funny: 'Songs about trucks, love, and loss',
       },
       {
         word: 'DYNAMIC',
@@ -1759,7 +1763,7 @@ const PACKS = {
       {
         word: 'RIG',
         serious: 'Large semi-truck',
-        funny: 'A 18-wheeler that owns the highway',
+        funny: 'An 18-wheeler that owns the highway',
       },
       {
         word: 'SUB',
@@ -1808,7 +1812,7 @@ const PACKS = {
       },
       {
         word: 'CART',
-        serious: 'Small horse-drawn vehicle',
+        serious: 'Golf ____',
         funny: 'What you push at the grocery store',
       },
       {
@@ -1869,7 +1873,7 @@ const PACKS = {
       {
         word: 'RAIL',
         serious: 'Train track',
-        funny: 'The steel path for a "choo-choo"',
+        funny: 'The steel path trains live on',
       },
       {
         word: 'ROAD',
@@ -2000,7 +2004,7 @@ const PACKS = {
       {
         word: 'SLOOP',
         serious: 'Type of sailboat',
-        funny: 'A boat that sounds like a soup',
+        funny: 'A sailboat with a funny name',
       },
       {
         word: 'STEER',
@@ -2039,7 +2043,7 @@ const PACKS = {
       },
       {
         word: 'AIRMEN',
-        serious: 'Flight personnel',
+        serious: 'Aircrew members',
         funny: 'People who spend their lives looking down',
       },
       {
@@ -2266,9 +2270,9 @@ const PACKS = {
         funny: 'Short for "radical" and 100% tubular',
       },
       {
-        word: 'SRI',
-        serious: 'Part of "___ Lanka"',
-        funny: 'A tropical setting for a neon-clad music video',
+        word: 'VCR',
+        serious: 'Home video player',
+        funny: 'The machine that blinked 12:00 forever',
       },
       {
         word: 'MTV',
@@ -2427,8 +2431,8 @@ const PACKS = {
         funny: 'A dark room full of quarters and beeping noises',
       },
       {
-        word: 'BEASTS',
-        serious: '___ie Boys',
+        word: 'BEASTIE',
+        serious: '___ Boys',
         funny: 'The trio who fought for their "Right to Party"',
       },
       {
@@ -2482,9 +2486,9 @@ const PACKS = {
         funny: 'Part man, part machine, all 80s action',
       },
       {
-        word: 'SMILEY',
-        serious: 'Acid house logo',
-        funny: 'The yellow face that was "All over" the 80s',
+        word: 'RAVER',
+        serious: 'All-night dance fan',
+        funny: 'Someone who definitely didn’t go home early',
       },
       {
         word: 'TOPGUN',
@@ -2537,7 +2541,7 @@ const PACKS = {
         funny: "Don't feed them after midnight!",
       },
       {
-        word: 'LEGWARM',
+        word: 'LEGWARMERS',
         serious: 'Clothing for aerobics',
         funny: 'Sweaters for your shins',
       },
@@ -2699,7 +2703,7 @@ const PACKS = {
         funny: 'For the keyboardist who wants to be a guitarist',
       },
       {
-        word: 'SCRUNCHI',
+        word: 'SCRUNCHIE',
         serious: '80s hair tie',
         funny: 'A fabric donut for your ponytail',
       },
@@ -2792,10 +2796,11 @@ const PACKS = {
         funny: 'The band that found their religion in the 90s',
       },
       {
-        word: 'CHAD',
-        serious: 'Disputed 2000 ballot piece',
-        funny: 'The "hanging" villain of the decade\'s end',
+        word: 'TRL',
+        serious: 'MTV countdown show',
+        funny: 'Where boy bands lived or died after school',
       },
+
       {
         word: 'ELMO',
         serious: '1996\'s "Tickle Me" toy',
@@ -2833,9 +2838,10 @@ const PACKS = {
       },
       {
         word: 'AKIRA',
-        serious: '1990s anime hit',
-        funny: 'The movie that made kids think cartoons were scary',
+        serious: 'Influential cyberpunk anime film',
+        funny: 'The movie that taught us cartoons can be terrifying',
       },
+
       {
         word: 'BJORK',
         serious: 'Icelandic singer',
@@ -2894,12 +2900,12 @@ const PACKS = {
       {
         word: 'DIANA',
         serious: 'Princess of Wales',
-        funny: 'The "Candle in the Wind"',
+        funny: 'The reason “Candle in the Wind 1997” hit repeat everywhere',
       },
       {
         word: 'DIESEL',
-        serious: 'Ripped jeans brand',
-        funny: 'The pants that cost more because they had holes',
+        serious: 'Italian denim brand',
+        funny: 'The jeans that cost more because they already lost a fight',
       },
       {
         word: 'FLANNEL',
@@ -3008,9 +3014,9 @@ const PACKS = {
         funny: 'The group that told us "Don\'t Speak"',
       },
       {
-        word: 'CRANBERRY',
-        serious: 'Band behind "Zombie"',
-        funny: 'The group that made sadness sound beautiful',
+        word: 'CRANBERRIES',
+        serious: 'Irish band behind “Zombie”',
+        funny: 'The group that made sadness loud and unforgettable',
       },
       {
         word: 'GOOSEBUMPS',
@@ -3034,8 +3040,8 @@ const PACKS = {
       },
       {
         word: 'WILLS',
-        serious: 'Prince of the 90s',
-        funny: 'The elder son of Charles and Diana',
+        serious: 'Prince William nickname',
+        funny: 'The only Wills you could not update with a pencil',
       },
       {
         word: 'ENYCE',
@@ -3074,8 +3080,8 @@ const PACKS = {
       },
       {
         word: 'KELSEY',
-        serious: '"___ Grammer"',
-        funny: 'The man who played Frasier Crane',
+        serious: 'Grammer of “Frasier”',
+        funny: 'The man who made tossed salad and scrambled eggs famous',
       },
       {
         word: 'ZIMA',
@@ -3231,8 +3237,8 @@ const PACKS = {
       },
       {
         word: 'PANTERA',
-        serious: '"___-a"',
-        funny: 'The "Cowboys from Hell" metal band',
+        serious: 'Metal band with “Cowboys from Hell”',
+        funny: 'Proof that the 90s were not all boy bands and windbreakers',
       },
       {
         word: 'RAGE',
@@ -3265,7 +3271,7 @@ const PACKS = {
 
   worldevents: {
     id: 'worldevents',
-    name: 'World Events',
+    name: '21st Century',
     wordBank: [
       {
         word: 'APP',
@@ -3294,10 +3300,11 @@ const PACKS = {
         funny: 'The city that threw a party for the whole world',
       },
       {
-        word: 'TSN',
-        serious: 'Network for 21st c. sports',
-        funny: 'Three letters for sports fans',
+        word: 'ESPN',
+        serious: 'Global sports network',
+        funny: 'The channel that made highlights a lifestyle',
       },
+
       {
         word: 'ARAB',
         serious: 'The "___ Spring"',
@@ -3360,8 +3367,8 @@ const PACKS = {
       },
       {
         word: 'WIKI',
-        serious: 'Prefix for 21st c. "Leaks"',
-        funny: 'The "fast" way to get information (and secrets)',
+        serious: 'Collaborative online encyclopedia',
+        funny: 'The place everyone checks but no one cites',
       },
       {
         word: 'CLOUD',
@@ -3387,6 +3394,11 @@ const PACKS = {
         word: 'EBOLA',
         serious: '2014 West African outbreak',
         funny: 'A virus that made everyone reach for sanitizer',
+      },
+      {
+        word: 'ROBOT',
+        serious: 'Autonomous machine',
+        funny: 'A worker that never asks for coffee breaks',
       },
       {
         word: 'GREEK',
@@ -3461,13 +3473,13 @@ const PACKS = {
       },
       {
         word: 'EMAILS',
-        serious: 'Subject of 2016 controversy',
-        funny: 'The version of "The dog ate my homework"',
+        serious: 'Digital correspondence',
+        funny: 'Proof that nothing truly deletes',
       },
       {
-        word: 'FRENCH',
-        serious: '2015 Paris Accord nation',
-        funny: 'People who take climate goals with a croissant',
+        word: 'FRANCE',
+        serious: 'Paris Accord signatory nation',
+        funny: 'Where climate talks come with strong opinions and wine',
       },
       {
         word: 'GIZMOS',
@@ -3482,7 +3494,7 @@ const PACKS = {
       {
         word: 'MERKEL',
         serious: 'Longtime German Chancellor',
-        funny: 'The "Iron Lady" of the European Union',
+        funny: 'Europe’s calmest crisis manager',
       },
       {
         word: 'TIKTOK',
@@ -3562,16 +3574,9 @@ const PACKS = {
       },
 
       {
-        word: 'ELLIOT',
-        serious: 'Boy who befriended an alien in 1982',
-        funny: 'The kid who proved bikes can fly',
-      },
-
-      {
         word: 'SMART',
-        serious: 'Phone era starting in the 2000s',
-        funny:
-          "A device that knows everything except when you're trying to unlock it",
+        serious: 'As in smartphone era',
+        funny: "A device that knows everything except when you're unlocking it",
       },
 
       {
@@ -3657,13 +3662,13 @@ const PACKS = {
       },
       {
         word: 'TERROR',
-        serious: 'War on ___ (2001-)',
-        funny: 'A long global conflict against an abstract noun',
+        serious: 'War on ___ (post-2001 global campaign)',
+        funny: 'An abstract noun that became a foreign policy target',
       },
       {
         word: 'REAPER',
-        serious: 'Predator or Reaper',
-        funny: 'A plane that flies itself (and never asks for snacks)',
+        serious: 'US military drone',
+        funny: 'A plane that flies itself and never misses a meeting',
       },
       {
         word: 'TURING',
@@ -3801,17 +3806,25 @@ const PACKS = {
       { word: 'CUP', serious: 'Trophy type', funny: 'Shiny bragging rights' },
       { word: 'SKI', serious: 'Snow sport gear', funny: 'Fast way downhill' },
       { word: 'ROW', serious: 'Boat motion', funny: 'Arms, repeat' },
-      { word: 'PUCK', serious: 'Hockey disc', funny: 'Tiny chaos disk' },
+      { word: 'PUCK', serious: 'Hockey disc', funny: 'Tiny chaos disc' },
       { word: 'JOG', serious: 'Slow run', funny: 'Running’s cousin' },
       { word: 'PAD', serious: 'Protective gear', funny: 'Impact insurance' },
       { word: 'TEE', serious: 'Golf peg', funny: 'Ball pedestal' },
       { word: 'RUN', serious: 'Baseball score', funny: 'Worth celebrating' },
       { word: 'PRO', serious: 'Expert player', funny: 'Gets paid for this' },
-      { word: 'END', serious: '___ zone', funny: 'The goal line’s roommate' },
+      {
+        word: 'END',
+        serious: '___ zone',
+        funny: 'Where receivers go to celebrate',
+      },
 
       // ── 4-letter sweet spot (25)
       { word: 'GOAL', serious: 'Scoring unit', funny: 'Reason people cheer' },
-      { word: 'BALL', serious: 'Game essential', funny: 'The whole problem' },
+      {
+        word: 'BALL',
+        serious: 'Game essential',
+        funny: 'The thing everyone is chasing',
+      },
       {
         word: 'TEAM',
         serious: 'Group of players',
@@ -3831,7 +3844,7 @@ const PACKS = {
       { word: 'SWIM', serious: 'Pool activity', funny: 'Fast splashing' },
       { word: 'RACE', serious: 'Speed contest', funny: 'First or forgotten' },
       { word: 'SHOT', serious: 'Scoring attempt', funny: 'Hope with force' },
-      { word: 'SLAM', serious: 'Grand ___', funny: 'All-in hit' },
+      { word: 'SLAM', serious: 'Grand ___', funny: 'Tennis bragging rights' },
       { word: 'DRAW', serious: 'Tie game', funny: 'Everyone shrugs' },
       { word: 'LOSS', serious: 'Defeat', funny: 'Film review time' },
       { word: 'BUNT', serious: 'Soft hit', funny: 'Tiny betrayal' },
@@ -3851,7 +3864,7 @@ const PACKS = {
       { word: 'COURT', serious: 'Play surface', funny: 'Not a courtroom' },
       { word: 'FIELD', serious: 'Grass play area', funny: 'Mud potential' },
       { word: 'TRACK', serious: 'Running path', funny: 'Oval destiny' },
-      { word: 'PITCH', serious: 'Thrown ball', funny: 'Fast negotiation' },
+      { word: 'PITCH', serious: 'Baseball throw', funny: 'Fast negotiation' },
       { word: 'CATCH', serious: 'Glove action', funny: 'Please don’t drop' },
       {
         word: 'SERVE',
@@ -3880,7 +3893,11 @@ const PACKS = {
       { word: 'FINAL', serious: 'Championship game', funny: 'No redo allowed' },
 
       // ── 6-letter utility (15)
-      { word: 'SOCCER', serious: 'Global football', funny: 'World sport' },
+      {
+        word: 'SOCCER',
+        serious: 'Global football',
+        funny: 'Ninety minutes of stress',
+      },
       { word: 'TENNIS', serious: 'Racket sport', funny: 'Polite yelling' },
       { word: 'HOCKEY', serious: 'Puck sport', funny: 'Fast chaos on ice' },
       { word: 'PLAYER', serious: 'Participant', funny: 'Uniform wearer' },
@@ -3910,9 +3927,17 @@ const PACKS = {
       { word: 'STADIUM', serious: 'Sports venue', funny: 'Concrete roar box' },
       { word: 'OFFENSE', serious: 'Scoring side', funny: 'Point hunters' },
       { word: 'DEFENSE', serious: 'Stopping side', funny: 'Hope killers' },
-      { word: 'MARATHON', serious: '26.2 mile race', funny: 'Long promise' },
+      {
+        word: 'MARATHON',
+        serious: '26.2 mile race',
+        funny: 'A terrible idea you regret at mile 18',
+      },
       { word: 'OLYMPICS', serious: 'Global games', funny: 'World flex event' },
-      { word: 'ATHLETE', serious: 'Sports person', funny: 'Human machine' },
+      {
+        word: 'ATHLETE',
+        serious: 'Sports person',
+        funny: 'Someone paid to sweat in public',
+      },
       { word: 'CHAMPION', serious: 'The winner', funny: 'Last one standing' },
       { word: 'OVERTIME', serious: 'Extra play', funny: 'Bonus stress' },
       {
@@ -3985,7 +4010,7 @@ const PACKS = {
       {
         word: 'APE',
         serious: 'Primate such as a gorilla',
-        funny: "Guy who's all knuckles and no manners",
+        funny: 'All arms, all attitude',
       },
       {
         word: 'BEE',
@@ -4030,7 +4055,7 @@ const PACKS = {
       {
         word: 'KOI',
         serious: 'Decorative carp',
-        funny: 'A fish that’s too "shy" to speak?',
+        funny: 'A fish bred to be fancy',
       },
       {
         word: 'OWL',
@@ -4101,7 +4126,7 @@ const PACKS = {
       {
         word: 'LYNX',
         serious: 'Tufted-ear wildcat',
-        funny: 'A cat that’s missing its "u"',
+        funny: 'A cat with permanent eyebrow goals',
       },
       {
         word: 'MOTH',
@@ -4152,7 +4177,7 @@ const PACKS = {
       {
         word: 'DINGO',
         serious: 'Wild Australian dog',
-        funny: 'The canine that "ate the baby"',
+        funny: 'A canine that definitely steals your lunch',
       },
       {
         word: 'EGRET',
@@ -4349,8 +4374,8 @@ const PACKS = {
       },
       {
         word: 'BUFFALO',
-        serious: 'Large wild ox',
-        funny: 'A city in NY or a hairy beast',
+        serious: 'Large bison-like mammal',
+        funny: 'A city in New York or a very hairy animal',
       },
       {
         word: 'CHEETAH',
@@ -4380,7 +4405,7 @@ const PACKS = {
       {
         word: 'GAZELLE',
         serious: 'Graceful antelope',
-        funny: 'A fast runner with thin legs',
+        funny: 'A runner built entirely for fleeing',
       },
       {
         word: 'HAMSTER',
@@ -4537,10 +4562,10 @@ const PACKS = {
         serious: 'Eggnog, for short',
         funny: 'Creamy holiday mischief',
       },
-      { word: 'EVE', serious: 'Night before', funny: 'The pre-party page' },
+      { word: 'EVE', serious: 'Night before', funny: 'The pre-party night' },
       {
         word: 'IVY',
-        serious: 'Evergreen plant',
+        serious: 'Climbing evergreen vine',
         funny: 'Green that won’t quit',
       },
       {
@@ -4560,7 +4585,11 @@ const PACKS = {
         serious: 'Santa helper',
         funny: 'Tiny coworker with energy',
       },
-      { word: 'LOG', serious: 'Yule ___', funny: 'Firewood with branding' },
+      {
+        word: 'LOG',
+        serious: 'Yule ___',
+        funny: 'Firewood with holiday status',
+      },
       {
         word: 'INN',
         serious: 'Nativity setting',
@@ -4847,7 +4876,7 @@ const PACKS = {
       {
         word: 'REINDEER',
         serious: 'Sleigh puller',
-        funny: 'Team of nine, allegedly',
+        funny: 'Santa’s eight plus the red-nosed intern',
       },
       {
         word: 'DECEMBER',
@@ -4932,9 +4961,9 @@ const PACKS = {
         funny: 'Sparkle spaghetti',
       },
       {
-        word: 'ORNAMENT',
-        serious: 'Tree decoration',
-        funny: 'Bauble with a mission',
+        word: 'WRAPPING',
+        serious: 'Gift covering material',
+        funny: 'Paper designed to be destroyed',
       },
       { word: 'FIREPLACE', serious: 'Hearth', funny: 'The warm brag corner' },
       {
