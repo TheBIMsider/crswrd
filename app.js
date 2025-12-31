@@ -382,8 +382,8 @@ function init() {
       stageText.textContent = `Puzzle generated. Grid size: ${config.timeLength}.`;
     }
 
-    // Phone + tablet: collapse config panel after generate
-    if (window.matchMedia('(max-width: 900px)').matches) {
+    // Touch devices (phone + tablet, including landscape): collapse after generate
+    if (isTouchLikely()) {
       collapseConfigPanel(true);
       setStatus('Settings captured. Panel collapsed for gameplay.');
     }
