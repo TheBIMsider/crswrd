@@ -5266,6 +5266,107 @@ function getRecencyWeightFactor(packId, word) {
   return 1;
 }
 
+// ---- Replayability memory (Session 24) ----
+// Persist a small history of the last N puzzles per pack to reduce repeats across reloads.
+// Storage format (v1):
+//   { byPack: { [packId]: [ [WORD...], [WORD...], ... ] } }
+// Backward compatible with older formats:
+//   - flat array of words
+//   - { puzzles: [...] } (single bucket)
+const RECENT_WORDS_KEY = 'crswrd_recent_words_v1';
+const MAX_RECENT_WORDS = 300; // absolute cap for safety (flattened per pack)
+
+// Pack-aware memory window tuning.
+// Everything has a bigger pool, so we can remember more without boxing ourselves in.
+function getRecentPuzzleWindow(packId) {
+  if (packId === EVERYTHING_PACK_ID) return 6; // adjust if you want: 5–8 is usually fine
+  return 3; // default for normal packs
+}
+
+function loadRecentWordsStore() {
+  try {
+    const raw = localStorage.getItem(RECENT_WORDS_KEY);
+    if (!raw) return { byPack: {} };
+
+    const parsed = JSON.parse(raw);
+
+    // Back-compat 1: old format was a flat array of words.
+    // Treat it as a single bucket under EVERYTHING so nothing breaks.
+    if (Array.isArray(parsed)) {
+      const cleaned = parsed
+        .map((w) => normalizeWord(w))
+        .filter(Boolean)
+        .slice(-MAX_RECENT_WORDS);
+      return {
+        byPack: { [EVERYTHING_PACK_ID]: cleaned.length ? [cleaned] : [] },
+      };
+    }
+
+    // Back-compat 2: single-bucket puzzles format: { puzzles: [...] }
+    if (parsed && Array.isArray(parsed.puzzles)) {
+      const cleanedPuzzles = parsed.puzzles
+        .filter((p) => Array.isArray(p))
+        .map((p) => p.map((w) => normalizeWord(w)).filter(Boolean))
+        .filter((p) => p.length);
+      return { byPack: { [EVERYTHING_PACK_ID]: cleanedPuzzles } };
+    }
+
+    // Current format
+    if (parsed && parsed.byPack && typeof parsed.byPack === 'object') {
+      const byPack = {};
+      for (const [packId, puzzles] of Object.entries(parsed.byPack)) {
+        if (!Array.isArray(puzzles)) continue;
+        byPack[packId] = puzzles
+          .filter((p) => Array.isArray(p))
+          .map((p) => p.map((w) => normalizeWord(w)).filter(Boolean))
+          .filter((p) => p.length);
+      }
+      return { byPack };
+    }
+
+    return { byPack: {} };
+  } catch {
+    return { byPack: {} };
+  }
+}
+
+function saveRecentWordsStore(store) {
+  const byPack = store && store.byPack ? store.byPack : {};
+  const trimmed = { byPack: {} };
+
+  for (const [packId, puzzles] of Object.entries(byPack)) {
+    const windowSize = getRecentPuzzleWindow(packId);
+    const safePuzzles = Array.isArray(puzzles) ? puzzles : [];
+    trimmed.byPack[packId] = safePuzzles.slice(-windowSize);
+  }
+
+  localStorage.setItem(RECENT_WORDS_KEY, JSON.stringify(trimmed));
+}
+
+// Convenience: flattened list of recent words for a given pack
+function loadRecentWords(packId) {
+  const store = loadRecentWordsStore();
+  const puzzles = (store.byPack && store.byPack[packId]) || [];
+  return puzzles.flat().slice(-MAX_RECENT_WORDS);
+}
+
+// Merge new puzzle words into history for a given pack
+function updateRecentWords(packId, puzzleWords) {
+  const store = loadRecentWordsStore();
+  if (!store.byPack) store.byPack = {};
+
+  const unique = Array.from(
+    new Set((puzzleWords || []).map((w) => normalizeWord(w)).filter(Boolean))
+  );
+  if (!unique.length) return;
+
+  const puzzles = store.byPack[packId] || [];
+  puzzles.push(unique);
+  store.byPack[packId] = puzzles;
+
+  saveRecentWordsStore(store);
+}
+
 /**
  * Record words used in a successfully generated puzzle.
  * Keeps only the last RECENT_MEMORY_WINDOW puzzles per pack.
@@ -5337,11 +5438,24 @@ function generatePuzzleFromWordBank({ packId, tone, difficulty, timeLength }) {
 
   for (let attempt = 0; attempt < attempts; attempt++) {
     // Weighted pick: makes Easy/Medium/Hard feel different without changing the algorithm.
-    // Session 7: also soft-penalize recently used words (per pack) to improve variety.
+    // Session 7: soft-penalize recently used words (per pack, in-memory).
+    // Session 24: also soft-penalize words used in recent puzzles across page reloads (localStorage).
+    const persistentRecent = new Set(loadRecentWords(pack.id));
+
+    // Everything mode has a bigger pool, so we can push harder on variety.
+    const isEverything = pack.id === EVERYTHING_PACK_ID;
+    const persistentPenalty = isEverything ? 0.35 : 0.6; // smaller = stronger penalty
+
     const weights = candidates.map((x) => {
       const base = lengthWeight(x.word.length, difficulty);
       const recency = getRecencyWeightFactor(pack.id, x.word);
-      return base * recency;
+
+      const normalized = normalizeWord(x.word);
+      const persistentRecency = persistentRecent.has(normalized)
+        ? persistentPenalty
+        : 1;
+
+      return base * recency * persistentRecency;
     });
 
     const chosen = weightedSample(candidates, weights, targetWords);
@@ -5380,6 +5494,12 @@ function generatePuzzleFromWordBank({ packId, tone, difficulty, timeLength }) {
 
     // Session 7: remember words used so the next puzzles avoid immediate repeats.
     rememberPuzzleWords(
+      pack.id,
+      placedAll.map((p) => p.word)
+    );
+
+    // Session 24: persist recent words across reloads for better replay variety.
+    updateRecentWords(
       pack.id,
       placedAll.map((p) => p.word)
     );
@@ -7213,7 +7333,7 @@ function checkForSolved(host, model, state) {
     // Add a subtle solved look
     host.classList.add('puzzle-solved');
 
-    setCheckStatus('Solved! 🎉');
+    setCheckStatus('✅ Puzzle solved! Tap “New Puzzle” for a fresh grid. 🧩');
 
     // Optional: quick console brag
     console.info('CRSWRD: Puzzle solved.');
