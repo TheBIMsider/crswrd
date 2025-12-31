@@ -99,7 +99,18 @@ CRSWRD includes **10** curated word packs (100 words each), plus an **Everything
 - Puzzle difficulty can vary due to random generation
 - No puzzle saving or resume (yet)
 - No zoom or pan for large grids (planned)
-- Mobile works, but the best experience is still on desktop
+
+---
+
+## Device support
+
+- **Desktop:** fully supported (primary experience)
+- **Tablets:** supported and playable on larger screens
+- **Phones:** best-effort only
+
+CRSWRD is designed for larger screens. Phone support is limited by platform keyboard and focus constraints.
+
+For details, see [`docs/mobile-support.md`](docs/mobile-support.md).
 
 ---
 
