@@ -464,6 +464,28 @@ select:focus {
   background: rgba(183, 240, 0, 0.14);
 }
 
+/* Mobile typing: make the active cell feel like the real input target */
+body.mobile-typing .cell.active {
+  box-shadow: 0 0 0 4px rgba(183, 240, 0, 0.18);
+}
+
+/* Caret attached to the value element when typing on mobile */
+body.mobile-typing .cell.active .val:empty::after {
+  content: '';
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: var(--text);
+  opacity: 0.85;
+  animation: crswrd-caret-blink 1s steps(1, end) infinite;
+}
+
+@keyframes crswrd-caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
 /* Session 9: Gameplay toolbar layout */
 
 /* One-line gameplay toolbar */

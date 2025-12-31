@@ -7,6 +7,9 @@ let CURRENT = null;
 
 let MOBILE_INPUT = null;
 
+// Mobile focus lock: used to avoid stealing focus back while user interacts with controls
+let MOBILE_FOCUS_LOCK_UNTIL = 0;
+
 function isTouchLikely() {
   // Touch-capable detection that keeps desktop stable, but does NOT break tablets in landscape.
   const maxTouchPoints = navigator.maxTouchPoints || 0;
@@ -60,6 +63,12 @@ function focusMobileInput() {
 
   // Do not jump the page around when keyboard opens
   requestAnimationFrame(() => window.scrollTo(x, y));
+}
+
+function setMobileTypingVisual(isTyping) {
+  // Only matters on touch devices
+  if (!isTouchLikely()) return;
+  document.body.classList.toggle('mobile-typing', Boolean(isTyping));
 }
 
 function scrollActiveCellIntoView() {
@@ -6944,6 +6953,9 @@ function wireCheckButtons() {
 function wireMobileKeyboard() {
   const input = getMobileInput();
   if (!input) return;
+
+  input.addEventListener('focus', () => setMobileTypingVisual(true));
+  input.addEventListener('blur', () => setMobileTypingVisual(false));
 
   // beforeinput is the most reliable way to detect backspace on mobile keyboards
   input.addEventListener('beforeinput', (e) => {
