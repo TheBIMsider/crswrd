@@ -78,16 +78,15 @@ CRSWRD includes **10** curated word packs (100 words each), plus an **Everything
 
 - General
 - Movies
-- Sports
-- Holidays
-- Animals
 - Music
 - Transportation
 - The 80's
 - The 90's
-- World Events
-
-**Everything mode:**
+- 21st Century
+- Sports
+- Holidays
+- Animals
+  **Everything mode:**
 
 - “Everything” is not a separate pack.
 - It randomly pulls from all installed packs, so it automatically includes future packs too.
