@@ -62,7 +62,19 @@ function focusMobileInput() {
   requestAnimationFrame(() => window.scrollTo(x, y));
 }
 
-let MOBILE_FOCUS_LOCK_UNTIL = 0;
+function scrollActiveCellIntoView() {
+  const activeCell = document.querySelector('.cell.active');
+  if (!activeCell) return;
+
+  // Give the keyboard a moment to appear before scrolling
+  requestAnimationFrame(() => {
+    activeCell.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'center',
+    });
+  });
+}
 
 function suppressMobileRefocus(ms = 900) {
   MOBILE_FOCUS_LOCK_UNTIL = Date.now() + ms;
@@ -7041,15 +7053,19 @@ function wireKeyboardLauncher() {
   const btn = $('keyboardBtn');
   if (!btn) return;
 
-  // pointerdown helps avoid a blur/focus tug-of-war on touch devices
-  btn.addEventListener('pointerdown', (e) => {
-    e.preventDefault();
-    focusMobileInput();
-  });
+  function openKeyboardAndCenterActiveCell(e) {
+    // pointerdown: avoid blur/focus tug-of-war on touch devices
+    if (e) e.preventDefault();
 
-  btn.addEventListener('click', () => {
     focusMobileInput();
-  });
+
+    // Make it feel like focus is “on the grid” by centering the active cell
+    // after the OS keyboard starts to appear.
+    scrollActiveCellIntoView();
+  }
+
+  btn.addEventListener('pointerdown', openKeyboardAndCenterActiveCell);
+  btn.addEventListener('click', openKeyboardAndCenterActiveCell);
 }
 
 // ─────────────────────────────────────────────
