@@ -558,18 +558,6 @@ body.mobile-typing .cell.active .val:empty::after {
   font-size: 12px;
 }
 
-/* Secondary button base style (used for Puzzle settings button on touch devices too) */
-.btn-secondary {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 14px;
-  border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.06);
-  color: var(--text);
-  font-weight: 800;
-  cursor: pointer;
-}
-
 .check-status.is-win {
   font-weight: 800;
   color: var(--text);
@@ -748,6 +736,14 @@ body.has-touch .touch-only {
     margin-bottom: 6px;
   }
 
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .puzzle-layout {
+    grid-template-columns: 1fr;
+  }
+
   .site-header {
     padding: 14px 14px 0;
   }
@@ -843,5 +839,18 @@ body.has-touch .touch-only {
     top: 5px;
     left: 6px;
     font-size: 9px;
+  }
+}
+
+/* Phone-only: keep the grid readable */
+@media (max-width: 520px) {
+  .crossword {
+    --cell: clamp(24px, 9vw, 36px);
+    gap: 2px;
+    padding: 6px;
+  }
+
+  .cell .val {
+    font-size: 16px;
   }
 }

@@ -6979,8 +6979,10 @@ function wireMobileKeyboard() {
       }
 
       syncUI(host, CURRENT.acrossList, CURRENT.downList, model, state);
-
+      // Keep keyboard open
       focusMobileInput();
+      // Keep the active cell visible above the keyboard
+      scrollActiveCellIntoView();
     }
   });
 
@@ -7065,19 +7067,16 @@ function wireKeyboardLauncher() {
   const btn = $('keyboardBtn');
   if (!btn) return;
 
-  function openKeyboardAndCenterActiveCell(e) {
-    // pointerdown: avoid blur/focus tug-of-war on touch devices
+  // Prevent focus tug-of-war on pointerdown, but open keyboard on click
+  btn.addEventListener('pointerdown', (e) => {
     if (e) e.preventDefault();
+  });
 
+  btn.addEventListener('click', (e) => {
+    if (e) e.preventDefault();
     focusMobileInput();
-
-    // Make it feel like focus is “on the grid” by centering the active cell
-    // after the OS keyboard starts to appear.
     scrollActiveCellIntoView();
-  }
-
-  btn.addEventListener('pointerdown', openKeyboardAndCenterActiveCell);
-  btn.addEventListener('click', openKeyboardAndCenterActiveCell);
+  });
 }
 
 // ─────────────────────────────────────────────
