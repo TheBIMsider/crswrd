@@ -7459,21 +7459,12 @@ window.packCounts = function packCounts() {
 };
 
 /**
- * Run sanity checks for the original baseline packs only (the 4 you started with).
+ * Run sanity checks for every pack in PACKS (future packs are included automatically).
  * Usage:
  *   checkAllWordBanks()
  */
 window.checkAllWordBanks = function checkAllWordBanks() {
-  const baseline = ['general', 'movies', 'sports', 'holidays'];
-
-  baseline.forEach((id) => {
-    const p = PACKS[id];
-    if (!p) {
-      console.warn(`[CRSWRD] Missing pack: ${id}`);
-      return;
-    }
-    checkWordBank(p);
-  });
+  Object.values(PACKS).forEach((p) => checkWordBank(p));
 
   console.log('[CRSWRD] Done. Tip: run packCounts() for a quick summary.');
 };
